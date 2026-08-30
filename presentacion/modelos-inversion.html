@@ -1,0 +1,1598 @@
+<title>Dos Estructuras de Inversión</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+:root{
+  --paper:#F1F3F1; --surface:#FBFBFA; --surface-2:#E7EAE7; --surface-3:#DDE1DE;
+  --ink:#141F1E; --ink-2:#485856; --ink-3:#7A8886;
+  --rule:#D3D8D5; --rule-soft:#E2E6E3;
+  --a:#00918A; --a-ink:#00706B; --a-soft:#E0EFED;
+  --b:#B0611A; --b-ink:#8F4E14; --b-soft:#F5EADF;
+  --good:#2C7A4E; --bad:#A5322A;
+  --display:"Spectral",Georgia,"Times New Roman",serif;
+  --body:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --measure:68ch; --wide:1140px;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px; --s8:72px; --s9:104px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#101514; --surface:#19201E; --surface-2:#222A28; --surface-3:#2B3532;
+    --ink:#E7ECEA; --ink-2:#A6B2AF; --ink-3:#7C8987;
+    --rule:#2D3735; --rule-soft:#232B29;
+    --a:#22A79C; --a-ink:#3FC0B4; --a-soft:#12312E;
+    --b:#C27F26; --b-ink:#D9963E; --b-soft:#33261A;
+    --good:#4FAE7B; --bad:#DE7268;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#101514; --surface:#19201E; --surface-2:#222A28; --surface-3:#2B3532;
+  --ink:#E7ECEA; --ink-2:#A6B2AF; --ink-3:#7C8987;
+  --rule:#2D3735; --rule-soft:#232B29;
+  --a:#22A79C; --a-ink:#3FC0B4; --a-soft:#12312E;
+  --b:#C27F26; --b-ink:#D9963E; --b-soft:#33261A;
+  --good:#4FAE7B; --bad:#DE7268;
+}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance;margin:0;line-height:1.18;letter-spacing:-.01em}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--a);outline-offset:3px;border-radius:2px}
+
+/* ---------- shell ---------- */
+.wrap{max-width:var(--wide);margin:0 auto;padding:0 var(--s5)}
+.col{max-width:var(--measure)}
+section{padding:var(--s8) 0;border-top:1px solid var(--rule);scroll-margin-top:56px}
+section:first-of-type{border-top:0}
+.stack{display:flex;flex-direction:column;gap:var(--s4)}
+.stack-lg{display:flex;flex-direction:column;gap:var(--s6)}
+.stack-sm{display:flex;flex-direction:column;gap:var(--s2)}
+
+/* ---------- masthead ---------- */
+.masthead{padding:var(--s8) 0 var(--s7);background:var(--surface);border-bottom:1px solid var(--rule)}
+.brandline{display:flex;align-items:baseline;gap:var(--s3);flex-wrap:wrap;
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.brandline strong{color:var(--a-ink);font-weight:500}
+.masthead h1{font-size:clamp(34px,5.4vw,60px);margin:var(--s5) 0 var(--s4);max-width:16ch}
+.masthead .lede{font-size:19px;color:var(--ink-2);max-width:60ch}
+.masthead .meta{margin-top:var(--s6);padding-top:var(--s4);border-top:1px solid var(--rule);
+  display:flex;gap:var(--s6) var(--s7);flex-wrap:wrap;font-size:13px;color:var(--ink-3)}
+.masthead .meta b{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-3);font-weight:500;margin-bottom:2px}
+.masthead .meta span{color:var(--ink);font-size:14px}
+
+/* ---------- nav ---------- */
+.nav{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--paper) 92%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--rule)}
+.nav-in{max-width:var(--wide);margin:0 auto;padding:0 var(--s5);display:flex;gap:var(--s5);
+  overflow-x:auto;scrollbar-width:none}
+.nav-in::-webkit-scrollbar{display:none}
+.nav a{flex:none;padding:11px 0;text-decoration:none;color:var(--ink-3);
+  font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  border-bottom:2px solid transparent;white-space:nowrap}
+.nav a:hover{color:var(--ink)}
+.nav a.on{color:var(--ink);border-bottom-color:var(--a)}
+
+/* ---------- section headers ---------- */
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--ink-3);display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s4)}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--rule)}
+.eyebrow .num{color:var(--a-ink);font-weight:500}
+h2{font-size:clamp(26px,3.4vw,36px);max-width:20ch}
+h3{font-size:21px;margin-top:var(--s2)}
+h4{font-size:16px;font-family:var(--body);font-weight:600;letter-spacing:0}
+.sub{color:var(--ink-2);font-size:17px;margin-top:var(--s3);max-width:62ch}
+
+/* ---------- text bits ---------- */
+.small{font-size:14px;color:var(--ink-2)}
+.note{font-size:13.5px;color:var(--ink-3);line-height:1.55}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+ul.clean{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:var(--s3)}
+ul.clean li{padding-left:18px;position:relative;font-size:15px;color:var(--ink-2)}
+ul.clean li::before{content:"";position:absolute;left:0;top:9px;width:6px;height:6px;
+  border:1px solid var(--ink-3);border-radius:1px}
+ul.clean li b{color:var(--ink);font-weight:600}
+ol.steps{margin:0;padding:0;list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:var(--s4)}
+ol.steps li{counter-increment:s;padding-left:38px;position:relative;font-size:15px;color:var(--ink-2)}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:24px;height:24px;
+  display:grid;place-items:center;border:1px solid var(--rule);border-radius:50%;
+  font-family:var(--mono);font-size:11px;color:var(--ink);background:var(--surface)}
+ol.steps li b{color:var(--ink);font-weight:600}
+
+/* ---------- tags ---------- */
+.tag{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.09em;text-transform:uppercase;padding:3px 8px;border-radius:3px;
+  border:1px solid var(--rule);color:var(--ink-2);background:var(--surface)}
+.tag.real{border-color:color-mix(in srgb,var(--good) 45%,transparent);color:var(--good)}
+.tag.sup{border-color:color-mix(in srgb,var(--b) 45%,transparent);color:var(--b-ink)}
+.tag.val{border-color:color-mix(in srgb,var(--bad) 45%,transparent);color:var(--bad)}
+.tag.ta{border-color:color-mix(in srgb,var(--a) 50%,transparent);color:var(--a-ink);background:var(--a-soft)}
+.tag.tb{border-color:color-mix(in srgb,var(--b) 50%,transparent);color:var(--b-ink);background:var(--b-soft)}
+
+/* ---------- cards ---------- */
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:5px;padding:var(--s5)}
+.card.a{border-top:3px solid var(--a)}
+.card.b{border-top:3px solid var(--b)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:var(--s4)}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:var(--s4)}
+
+/* ---------- stat tiles ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;
+  background:var(--rule);border:1px solid var(--rule);border-radius:5px;overflow:hidden}
+.stat{background:var(--surface);padding:var(--s5)}
+.stat .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:var(--s3);min-height:33px}
+.stat .v{font-family:var(--display);font-size:34px;font-weight:600;line-height:1;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat .v.a{color:var(--a-ink)} .stat .v.b{color:var(--b-ink)}
+.stat .d{font-size:13px;color:var(--ink-3);margin-top:var(--s3);line-height:1.45}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto;border:1px solid var(--rule);border-radius:5px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:560px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:500;background:var(--surface-2);border-bottom:1px solid var(--rule);
+  position:sticky;top:43px;z-index:1}
+@supports not (position:sticky){thead th{position:static}}
+tbody tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.tot td{background:var(--surface-2);font-weight:600;border-top:1px solid var(--rule)}
+tr.sec td{background:var(--surface-2);font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-3);padding-top:9px;padding-bottom:9px}
+th.ca,td.ca{background:color-mix(in srgb,var(--a-soft) 60%,transparent)}
+th.cb,td.cb{background:color-mix(in srgb,var(--b-soft) 60%,transparent)}
+thead th.ca{color:var(--a-ink)} thead th.cb{color:var(--b-ink)}
+td.lbl{color:var(--ink-2)}
+.neg{color:var(--bad)} .pos{color:var(--good)}
+
+/* ---------- figures ---------- */
+figure{margin:0;display:flex;flex-direction:column;gap:var(--s3)}
+figure svg{display:block;max-width:100%;height:auto;background:var(--surface);
+  border:1px solid var(--rule);border-radius:5px}
+figcaption{font-size:13.5px;color:var(--ink-3);line-height:1.5;max-width:76ch}
+figcaption b{color:var(--ink-2);font-weight:600}
+
+/* ---------- callout ---------- */
+.callout{border-left:3px solid var(--rule);padding:var(--s3) 0 var(--s3) var(--s4);font-size:14.5px;color:var(--ink-2)}
+.callout.warn{border-left-color:var(--b)}
+.callout.stop{border-left-color:var(--bad)}
+.callout b{color:var(--ink)}
+
+/* ---------- legend ---------- */
+.legend{display:flex;gap:var(--s5);flex-wrap:wrap;font-size:13px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.sw{width:11px;height:11px;border-radius:2px;flex:none}
+
+/* ---------- chart tooltip ---------- */
+.chart-host{position:relative}
+.tip{position:absolute;pointer-events:none;opacity:0;transition:opacity .12s;
+  background:var(--ink);color:var(--paper);border-radius:4px;padding:7px 10px;font-size:12px;
+  font-family:var(--mono);white-space:nowrap;z-index:5;transform:translate(-50%,-125%);line-height:1.5}
+.tip b{color:var(--paper);font-weight:600}
+[data-hit]{cursor:crosshair}
+
+/* ---------- misc ---------- */
+.kv{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);gap:var(--s2) var(--s4);font-size:14.5px}
+.kv dt{color:var(--ink-3);font-family:var(--mono);font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;padding-top:4px}
+.kv dd{margin:0;color:var(--ink-2)}
+.foot{padding:var(--s7) 0 var(--s9);border-top:1px solid var(--rule);color:var(--ink-3);font-size:13px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:640px){
+  .kv{grid-template-columns:minmax(0,1fr);gap:var(--s1) 0}
+  .kv dd{margin-bottom:var(--s3)}
+  section{padding:var(--s7) 0}
+  .masthead{padding:var(--s6) 0 var(--s5)}
+  .stat .v{font-size:28px}
+}
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="brandline">
+      <strong>Rebis</strong><span>·</span><span>Desarrollos Inmobiliarios · Madrid</span>
+      <span>·</span><span>Documento confidencial</span>
+    </div>
+    <h1>Dos estructuras para invertir con nosotros</h1>
+    <p class="lede">Préstamo participativo frente a sociedad propia del inversor: cómo funciona
+      cada una, qué aporta usted, cómo y cuándo recupera el capital, cuánto puede ganar y qué
+      riesgo asume — con la economía real de nuestras operaciones, no con promesas.</p>
+    <div class="meta">
+      <div><b>Preparado para</b><span>Segunda reunión con inversor</span></div>
+      <div><b>Fecha</b><span>Agosto 2026</span></div>
+      <div><b>Base de cálculo</b><span>Modelo de Flipping Rebis v1</span></div>
+      <div><b>Capital de referencia</b><span>1.102.632 €</span></div>
+    </div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Secciones">
+  <div class="nav-in">
+    <a href="#resumen">Resumen</a>
+    <a href="#negocio">El negocio</a>
+    <a href="#operacion">La operación</a>
+    <a href="#modelo-a">Modelo A</a>
+    <a href="#modelo-b">Modelo B</a>
+    <a href="#comparacion">Comparación</a>
+    <a href="#ejemplo">Ejemplo económico</a>
+    <a href="#riesgos">Riesgos</a>
+    <a href="#validar">Qué falta definir</a>
+    <a href="#pasos">Próximos pasos</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="resumen">
+  <div class="stack-lg">
+    <div>
+      <div class="eyebrow"><span class="num">01</span> Resumen ejecutivo</div>
+      <h2>La misma operación, dos formas de entrar</h2>
+      <p class="sub">Ambas estructuras financian exactamente el mismo negocio: comprar un
+        activo residencial infravalorado en Madrid prime, reformarlo y venderlo en unos
+        11 meses. Lo que cambia no es la operación: es quién es dueño de la sociedad que compra,
+        quién pide la hipoteca, dónde tributa el beneficio y qué garantía tiene usted.</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="k">Capital de referencia</div>
+        <div class="v">1,10 M€</div>
+        <div class="d">Capital propio de la operación tipo, con hipoteca al 55 %. El desembolso
+          máximo de caja es de 997.730 €.</div>
+      </div>
+      <div class="stat">
+        <div class="k">Modelo A · Préstamo participativo</div>
+        <div class="v a">18,6 %</div>
+        <div class="d">Retorno sobre capital en 11 meses (20,5 % anualizado) en escenario base,
+          antes de retención española e impuestos en Argentina.</div>
+      </div>
+      <div class="stat">
+        <div class="k">Modelo B · Sociedad propia</div>
+        <div class="v b">12,6 %</div>
+        <div class="d">Retorno sobre capital en 11 meses (13,8 % anualizado) en escenario base,
+          después de Impuesto sobre Sociedades y retención por dividendo.</div>
+      </div>
+      <div class="stat">
+        <div class="k">Plazo</div>
+        <div class="v">11<span style="font-size:18px;font-family:var(--body);font-weight:400"> meses</span></div>
+        <div class="d">8 de obra + 3 de comercialización. El capital vuelve íntegro en el cierre
+          de la venta, en un único pago.</div>
+      </div>
+    </div>
+
+    <div class="col stack">
+      <h3>Lo que decide entre una y otra</h3>
+      <ul class="clean">
+        <li><b>La hipoteca.</b> Nuestro acceso al crédito de CaixaBank se apoya en el historial de
+          nuestra sociedad y en nuestro aval personal. En el Modelo B, donde la sociedad es suya,
+          ese historial no existe y el banco puede no financiar. Sin hipoteca, el mismo capital
+          compra un activo de 781.000 € en lugar de uno de 1.225.000 €.</li>
+        <li><b>El Impuesto sobre Sociedades.</b> En el Modelo A los intereses del préstamo
+          participativo son gasto deducible de la sociedad, de modo que el beneficio tributa una
+          sola vez, en su país. En el Modelo B tributa primero al 25 % en España y después
+          soporta retención al repatriar el dividendo.</li>
+        <li><b>El control y la responsabilidad.</b> En el Modelo A usted es acreedor con garantía:
+          no asume responsabilidad civil, fiscal ni penal en España por los actos de la sociedad.
+          En el Modelo B usted es el dueño: control societario pleno, y también las obligaciones
+          y responsabilidades del socio y del administrador.</li>
+      </ul>
+      <div class="callout warn"><b>Nuestra recomendación es el Modelo A</b>, por acceso a
+        financiación, agilidad operativa y eficiencia fiscal. El Modelo B es preferible si su
+        prioridad es la titularidad directa del activo y está dispuesto a operar sin apalancamiento
+        bancario o a acreditar su perfil crediticio ante el banco español.</div>
+    </div>
+  </div>
+</section>
+
+<section id="negocio">
+  <div class="stack-lg">
+    <div>
+      <div class="eyebrow"><span class="num">02</span> Cómo funciona el negocio</div>
+      <h2>Comprar bien, reformar con criterio, vender rápido</h2>
+      <p class="sub">Operamos en zonas prime de Madrid — Justicia, Chamberí, Malasaña, Barrio de
+        las Letras, Retiro — donde la oferta es escasa y el producto reformado "llave en mano"
+        tiene alta rotación. El margen no se genera en la venta: se genera en la compra.</p>
+    </div>
+
+    <div class="grid3">
+      <div class="card">
+        <h4>Adquisición off-market</h4>
+        <p class="small" style="margin-top:8px">Brókers e inmobiliarias nos ofrecen activos por
+          debajo de mercado por acuerdo comercial. En operaciones sobre 3 M€, bancos y fondos nos
+          ofrecen directamente activos adjudicados por impago. Cada compra se contrasta con dos
+          valoradoras homologadas en España.</p>
+      </div>
+      <div class="card">
+        <h4>Transformación integral</h4>
+        <p class="small" style="margin-top:8px">Tres presupuestos cerrados de estudios de
+          arquitectura y constructoras de confianza, con equipo técnico completo (arquitecto,
+          calculista, estructuralista). Equipo propio de arquitectura e interiorismo. En apartamentos,
+          nuestra constructora puede financiar la obra.</p>
+      </div>
+      <div class="card">
+        <h4>Salida</h4>
+        <p class="small" style="margin-top:8px">Venta con plusvalía en 3 meses de comercialización.
+          Plan B documentado: mantener el activo en renta, con rendimiento bruto del 5,5 %–7 %
+          anual en apartamentos y 7 %–8 % en edificio completo.</p>
+      </div>
+    </div>
+
+    <div>
+      <h3 style="margin-bottom:var(--s4)">El calendario real de una operación</h3>
+      <figure>
+        <svg viewBox="0 0 1080 210" role="img" aria-label="Cronograma de una operación: 61 días de preparación hasta la escritura, y 11 meses de proyecto hasta la venta, con los cuatro momentos de desembolso de capital">
+          <defs>
+            <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+            </marker>
+          </defs>
+          <g font-family="IBM Plex Mono, monospace" font-size="10.5" fill="currentColor" opacity=".62" letter-spacing=".08em">
+            <text x="60" y="30">FASE 1 · PREPARACIÓN — DÍAS 1 A 61</text>
+            <text x="430" y="30">FASE 2 · PROYECTO — MESES 0 A 11</text>
+          </g>
+          <line x1="60" y1="40" x2="410" y2="40" stroke="currentColor" stroke-opacity=".18"/>
+          <line x1="430" y1="40" x2="1020" y2="40" stroke="currentColor" stroke-opacity=".18"/>
+
+          <line x1="60" y1="118" x2="1020" y2="118" stroke="currentColor" stroke-opacity=".3" marker-end="url(#ar)"/>
+
+          <rect x="446" y="110" width="318" height="16" rx="3" fill="var(--a)" fill-opacity=".2" stroke="var(--a)" stroke-opacity=".5"/>
+          <text x="605" y="122" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor">Obra · 8 meses</text>
+          <rect x="772" y="110" width="222" height="16" rx="3" fill="currentColor" fill-opacity=".07" stroke="currentColor" stroke-opacity=".25"/>
+          <text x="883" y="122" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor">Comercialización · 3 meses</text>
+
+          <g font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="currentColor">
+            <g opacity=".8">
+              <line x1="105" y1="118" x2="105" y2="102" stroke="currentColor" stroke-opacity=".3"/>
+              <text x="105" y="62" text-anchor="middle">Días 1–10</text>
+              <text x="105" y="78" text-anchor="middle" opacity=".6" font-size="10.5">Visitas, viabilidad,</text>
+              <text x="105" y="92" text-anchor="middle" opacity=".6" font-size="10.5">negociación</text>
+              <line x1="252" y1="118" x2="252" y2="102" stroke="currentColor" stroke-opacity=".3"/>
+              <text x="252" y="62" text-anchor="middle">Días 17–24</text>
+              <text x="252" y="78" text-anchor="middle" opacity=".6" font-size="10.5">Reserva ad referéndum</text>
+              <text x="252" y="92" text-anchor="middle" opacity=".6" font-size="10.5">y sociedad vehículo</text>
+            </g>
+          </g>
+
+          <g font-family="IBM Plex Sans, sans-serif" font-size="11.5">
+            <circle cx="352" cy="118" r="5" fill="var(--b)"/>
+            <line x1="352" y1="126" x2="352" y2="150" stroke="var(--b)" stroke-opacity=".5"/>
+            <text x="344" y="166" text-anchor="end" fill="var(--b-ink)" font-weight="600">Día 31</text>
+            <text x="344" y="181" text-anchor="end" fill="currentColor" opacity=".7" font-size="10.5">Arras · 10 % del precio</text>
+
+            <circle cx="430" cy="118" r="5" fill="var(--b)"/>
+            <line x1="430" y1="126" x2="430" y2="150" stroke="var(--b)" stroke-opacity=".5"/>
+            <text x="440" y="166" fill="var(--b-ink)" font-weight="600">Día 61 · Mes 0</text>
+            <text x="440" y="181" fill="currentColor" opacity=".7" font-size="10.5">Escritura, impuestos y gastos</text>
+
+            <circle cx="1000" cy="118" r="5" fill="var(--b)"/>
+            <line x1="1000" y1="126" x2="1000" y2="150" stroke="var(--b)" stroke-opacity=".5"/>
+            <text x="980" y="166" text-anchor="end" fill="var(--b-ink)" font-weight="600">Mes 11</text>
+            <text x="980" y="181" text-anchor="end" fill="currentColor" opacity=".7" font-size="10.5">Venta, cancelación de hipoteca y liquidación</text>
+          </g>
+        </svg>
+        <figcaption><b>Los cuatro momentos en los que se mueve su dinero.</b> Entre la
+          detección del activo y la escritura pasan unos 61 días; el proyecto en sí dura 11 meses.
+          Los fondos deben estar transferidos al menos 15 días antes de cada firma: los bancos
+          españoles pueden bloquear temporalmente los importes entrantes mientras validan la
+          documentación. Fuente: <span class="mono">Plazos para la Adquisición</span>.</figcaption>
+      </figure>
+    </div>
+
+    <div>
+      <h3 style="margin-bottom:var(--s4)">Nuestro historial</h3>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr>
+              <th>Operación</th><th>Estado</th><th class="n">Coste total</th>
+              <th class="n">Beneficio bruto</th><th class="n">Retorno</th><th>Nota</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>San Andrés 1</b></td>
+              <td><span class="tag real">Liquidada</span></td>
+              <td class="n">570.000 € compra</td>
+              <td class="n">331.970 €</td>
+              <td class="n pos">35,05 %</td>
+              <td class="lbl">Financiada con préstamo de 606.178 €. El prestamista cobró
+                130.636 € de intereses. Dos unidades vendidas.</td>
+            </tr>
+            <tr>
+              <td><b>Brescia</b></td>
+              <td><span class="tag real">Liquidada</span></td>
+              <td class="n">409.128 €</td>
+              <td class="n">16.021 €</td>
+              <td class="n">4,07 %</td>
+              <td class="lbl">Operación de bajo margen. La incluimos porque el rango real de
+                resultados es parte de la información que usted necesita.</td>
+            </tr>
+            <tr>
+              <td><b>García Paredes 21</b></td>
+              <td><span class="tag sup">Proyectada</span></td>
+              <td class="n">1.731.969 €</td>
+              <td class="n">328.631 €</td>
+              <td class="n">23,54 %</td>
+              <td class="lbl">162 m². Compra 1.225.000 €, venta objetivo 2.049.300 €.
+                Recalculada con metodología homogénea: 19,76 %.</td>
+            </tr>
+            <tr>
+              <td><b>Ruiz Jiménez 3</b></td>
+              <td><span class="tag sup">Proyectada</span></td>
+              <td class="n">2.037.509 €</td>
+              <td class="n">250.491 €</td>
+              <td class="n">25,41 %</td>
+              <td class="lbl">Con socio constructor (255.000 €, 13,17 % del capital). El 25,41 %
+                es previo a comisión de gestión e impuestos; homogeneizado, 13,73 %.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin-top:var(--s3)">Las cifras de García Paredes y Ruiz Jiménez son
+        <b>proyecciones</b> de sus respectivos cash-flows, no resultados cerrados. Sus retornos
+        originales no son directamente comparables entre sí porque cada archivo aplicaba una
+        metodología distinta; la columna "recalculada" los homogeneiza a beneficio neto después de
+        reparto, comisión de gestión e Impuesto sobre Sociedades.</p>
+    </div>
+  </div>
+</section>
+
+<section id="operacion">
+  <div class="stack-lg">
+    <div>
+      <div class="eyebrow"><span class="num">03</span> La economía de una operación</div>
+      <h2>Dónde va cada euro</h2>
+      <p class="sub">Todo lo que sigue usa una única operación de referencia — el activo de
+        García Paredes 21, 162 m² en Chamberí — porque es la que tiene el desglose de costes más
+        completo y auditado. Las dos estructuras se comparan sobre exactamente esta operación.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="tw">
+        <table>
+          <thead><tr><th>Concepto</th><th class="n">Importe</th><th class="n">% s/ coste</th></tr></thead>
+          <tbody>
+            <tr><td>Precio de compra</td><td class="n">1.225.000 €</td><td class="n">68,96 %</td></tr>
+            <tr><td>Gastos de adquisición<br><span class="note">ITP 2 %, comisión 3 % + IVA, notaría, registro, gestoría, IBI</span></td><td class="n">74.862 €</td><td class="n">4,21 %</td></tr>
+            <tr><td>Gastos de financiación<br><span class="note">AJD 1,2 %, apertura 0,5 %, coste financiero de obra, seguros, notaría</span></td><td class="n">53.592 €</td><td class="n">3,02 %</td></tr>
+            <tr><td>Reforma<br><span class="note">Obra 264.107 €, muebles, imprevistos 5,68 %, derramas, licencias, gastos corrientes</span></td><td class="n">318.025 €</td><td class="n">17,90 %</td></tr>
+            <tr><td>Gastos de venta<br><span class="note">Comisión 3 % + IVA, plusvalía municipal 2 %, cancelación de hipoteca, publicación</span></td><td class="n">104.903 €</td><td class="n">5,91 %</td></tr>
+            <tr class="tot"><td>Coste total del proyecto</td><td class="n">1.776.382 €</td><td class="n">100 %</td></tr>
+            <tr><td>Precio de venta objetivo<br><span class="note">162 m² × 12.650 €/m²</span></td><td class="n">2.049.300 €</td><td class="n"></td></tr>
+            <tr class="tot"><td>Beneficio bruto</td><td class="n pos">272.918 €</td><td class="n">13,3 % s/ venta</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <h4>Cómo se financia</h4>
+          <dl class="kv" style="margin-top:var(--s4)">
+            <dt>Hipoteca</dt><dd><b>673.750 €</b> — 55 % del precio de compra</dd>
+            <dt>Capital</dt><dd><b>1.102.632 €</b> — el capital que aporta el inversor</dd>
+            <dt>Caja máx.</dt><dd><b>997.730 €</b> — el desembolso real, porque los gastos de venta
+              se descuentan del precio en la escritura</dd>
+            <dt>Plazo</dt><dd><b>11 meses</b> — 8 de obra, 3 de comercialización</dd>
+          </dl>
+        </div>
+        <div class="card">
+          <h4>Cuánto margen de error hay</h4>
+          <p class="small" style="margin-top:var(--s3)">Manteniendo todo lo demás igual, la operación
+            entra en pérdida si:</p>
+          <ul class="clean" style="margin-top:var(--s3)">
+            <li>El precio de venta cae por debajo de <b>1.766.102 €</b> — un 13,8 % menos que el
+              objetivo (10.902 €/m² en lugar de 12.650 €/m²).</li>
+            <li>El precio de compra supera <b>1.475.751 €</b> — un 20,5 % más de lo previsto.</li>
+          </ul>
+          <p class="note" style="margin-top:var(--s3)">Esos son los dos umbrales que hay que
+            vigilar. Por eso el precio de compra se cierra con dos valoradoras homologadas y el
+            de venta se contrasta con comparables de la zona antes de firmar arras.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-host stack">
+      <h3>Cuándo se necesita el dinero</h3>
+      <p class="small col">El retorno final importa, pero lo que determina cuánto capital hay que
+        tener disponible es el punto más bajo de esta curva, no el total invertido.</p>
+      <figure>
+        <svg viewBox="0 0 1080 400" role="img" aria-label="Curva de saldo de caja acumulado: baja a 679.704 euros negativos en el mes 0, llega a su mínimo de 997.730 euros negativos en el mes 8 y salta a 272.918 euros positivos con la venta en el mes 11" id="cashchart">
+          <g stroke="currentColor" stroke-opacity=".1">
+            <line x1="112" y1="60" x2="1040" y2="60"/><line x1="112" y1="160" x2="1040" y2="160"/>
+            <line x1="112" y1="210" x2="1040" y2="210"/><line x1="112" y1="260" x2="1040" y2="260"/>
+            <line x1="112" y1="300" x2="1040" y2="300"/>
+          </g>
+          <line x1="112" y1="110" x2="1040" y2="110" stroke="currentColor" stroke-opacity=".4"/>
+          <g font-family="IBM Plex Mono, monospace" font-size="10.5" fill="currentColor" opacity=".55" text-anchor="end">
+            <text x="100" y="64">+250 k€</text><text x="100" y="114">0</text>
+            <text x="100" y="164">−250 k€</text><text x="100" y="214">−500 k€</text>
+            <text x="100" y="264">−750 k€</text><text x="100" y="304">−1,0 M€</text>
+          </g>
+          <path d="M112,110 L112,245.9 L196,253.9 L280,261.8 L364,269.8 L448,277.7 L532,285.7 L616,293.6 L700,301.6 L784,309.5 L868,309.5 L952,309.5 L1036,55.4 L1036,110 Z" fill="var(--a)" fill-opacity=".11"/>
+          <polyline fill="none" stroke="var(--a)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="112,245.9 196,253.9 280,261.8 364,269.8 448,277.7 532,285.7 616,293.6 700,301.6 784,309.5 868,309.5 952,309.5 1036,55.4"/>
+          <circle cx="112" cy="245.9" r="3" fill="var(--a)" stroke="var(--surface)" stroke-width="2"/><circle cx="196" cy="253.9" r="3" fill="var(--a)" stroke="var(--surface)" stroke-width="2"/><circle cx="280" cy="261.8" r="3" fill="var(--a)" stroke="var(--surface)" stroke-width="2"/><circle cx="364" cy="269.8" r="3" fill="var(--a)" stroke="var(--surface)" stroke-width="2"/><circle cx="448" cy="277.7" r="3" fill="var(--a)" stroke="var(--surface)" stroke-width="2"/><circle cx="532" cy="285.7" r="3" fill="var(--a)" stroke="var(--surface)" stroke-width="2"/><circle cx="616" cy="293.6" r="3" fill="var(--a)" stroke="var(--surface)" stroke-width="2"/><circle cx="700" cy="301.6" r="3" fill="var(--a)" stroke="var(--surface)" stroke-width="2"/><circle cx="784" cy="309.5" r="3" fill="var(--a)" stroke="var(--surface)" stroke-width="2"/><circle cx="868" cy="309.5" r="3" fill="var(--a)" stroke="var(--surface)" stroke-width="2"/><circle cx="952" cy="309.5" r="3" fill="var(--a)" stroke="var(--surface)" stroke-width="2"/><circle cx="1036" cy="55.4" r="3" fill="var(--a)" stroke="var(--surface)" stroke-width="2"/>
+          <g font-family="IBM Plex Sans, sans-serif" font-size="10.5" fill="currentColor" opacity=".55" text-anchor="middle"><text x="112" y="338">0</text><text x="196" y="338">1</text><text x="280" y="338">2</text><text x="364" y="338">3</text><text x="448" y="338">4</text><text x="532" y="338">5</text><text x="616" y="338">6</text><text x="700" y="338">7</text><text x="784" y="338">8</text><text x="868" y="338">9</text><text x="952" y="338">10</text><text x="1036" y="338">11</text>
+            <text x="576" y="366" opacity=".85">Mes del proyecto</text>
+          </g>
+          <g font-family="IBM Plex Sans, sans-serif" font-size="11.5">
+            <line x1="784" y1="303.5" x2="784" y2="262" stroke="currentColor" stroke-opacity=".35"/>
+            <text x="776" y="242" text-anchor="end" fill="currentColor" font-weight="600">Máxima exposición · 997.730 €</text>
+            <text x="776" y="257" text-anchor="end" fill="currentColor" opacity=".6" font-size="10.5">Mes 8 · el punto en que más capital está inmovilizado</text>
+            <line x1="1036" y1="55.4" x2="1036" y2="37.4" stroke="currentColor" stroke-opacity=".35"/>
+            <text x="1030" y="29.4" text-anchor="end" fill="var(--a-ink)" font-weight="600">Venta · +272.918 €</text>
+          </g>
+          <rect data-hit x="70" y="40" width="84" height="280" fill="transparent" data-m="0" data-v="-679704"/><rect data-hit x="154" y="40" width="84" height="280" fill="transparent" data-m="1" data-v="-719458"/><rect data-hit x="238" y="40" width="84" height="280" fill="transparent" data-m="2" data-v="-759211"/><rect data-hit x="322" y="40" width="84" height="280" fill="transparent" data-m="3" data-v="-798964"/><rect data-hit x="406" y="40" width="84" height="280" fill="transparent" data-m="4" data-v="-838717"/><rect data-hit x="490" y="40" width="84" height="280" fill="transparent" data-m="5" data-v="-878470"/><rect data-hit x="574" y="40" width="84" height="280" fill="transparent" data-m="6" data-v="-918223"/><rect data-hit x="658" y="40" width="84" height="280" fill="transparent" data-m="7" data-v="-957976"/><rect data-hit x="742" y="40" width="84" height="280" fill="transparent" data-m="8" data-v="-997730"/><rect data-hit x="826" y="40" width="84" height="280" fill="transparent" data-m="9" data-v="-997730"/><rect data-hit x="910" y="40" width="84" height="280" fill="transparent" data-m="10" data-v="-997730"/><rect data-hit x="994" y="40" width="84" height="280" fill="transparent" data-m="11" data-v="272918"/>
+        </svg>
+        <figcaption><b>El capital vuelve en un único momento.</b> No hay pagos intermedios: entre
+          el mes 0 y el mes 11 el dinero está inmovilizado. El desembolso máximo es de 997.730 €,
+          menos que el capital total de 1.102.632 € porque los gastos de venta se descuentan del
+          precio en la escritura. Reconstrucción mensual del <span class="mono">Modelo de Flipping v1</span>;
+          la obra se reparte en cuotas iguales, mientras que en la realidad se paga por certificación de avance.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="modelo-a">
+  <div class="stack-lg">
+    <div>
+      <div class="eyebrow"><span class="num">04</span> <span class="tag ta">Modelo A</span> Préstamo participativo</div>
+      <h2>Usted presta a la sociedad y cobra según el resultado</h2>
+      <p class="sub">Usted firma un contrato de préstamo participativo con la sociedad española que
+        compra el inmueble. No es socio: es acreedor. Su remuneración no es un interés fijo de
+        mercado, sino una participación en el beneficio de la operación.</p>
+    </div>
+
+    <figure>
+      <svg viewBox="0 0 1080 460" role="img" aria-label="Estructura del préstamo participativo: el inversor presta a una sociedad vehículo cuyo titular es Rebis; el banco aporta la hipoteca; la sociedad compra, reforma y vende el inmueble; al cierre devuelve el capital más el interés participativo, con prenda sobre las participaciones como garantía">
+        <defs>
+          <marker id="arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+          </marker>
+          <marker id="arAc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="var(--a)"/>
+          </marker>
+        </defs>
+
+        <rect x="430" y="30" width="220" height="58" rx="4" fill="var(--surface-2)" stroke="currentColor" stroke-opacity=".28"/>
+        <text x="540" y="55" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13" font-weight="600" fill="currentColor">Banco español</text>
+        <text x="540" y="73" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor" opacity=".6">CaixaBank · aval de Rebis</text>
+
+        <rect x="40" y="178" width="200" height="92" rx="4" fill="var(--a-soft)" stroke="var(--a)" stroke-width="1.5"/>
+        <text x="140" y="212" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13.5" font-weight="600" fill="currentColor">Inversor</text>
+        <text x="140" y="232" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor" opacity=".7">Acreedor, no socio</text>
+        <text x="140" y="249" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor" opacity=".7">Sin NIE ni trámites</text>
+
+        <rect x="430" y="163" width="220" height="122" rx="4" fill="var(--surface)" stroke="currentColor" stroke-width="1.5" stroke-opacity=".5"/>
+        <text x="540" y="196" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13.5" font-weight="600" fill="currentColor">Sociedad vehículo</text>
+        <text x="540" y="215" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor" opacity=".7">SL española · TMF Group</text>
+        <text x="540" y="242" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="currentColor" opacity=".55" letter-spacing=".07em">TITULAR</text>
+        <text x="540" y="262" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12.5" font-weight="600" fill="currentColor">Rebis</text>
+
+        <rect x="840" y="178" width="200" height="92" rx="4" fill="var(--surface-2)" stroke="currentColor" stroke-opacity=".28"/>
+        <text x="940" y="212" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13.5" font-weight="600" fill="currentColor">El inmueble</text>
+        <text x="940" y="232" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor" opacity=".7">162 m² · Chamberí</text>
+        <text x="940" y="249" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor" opacity=".7">Hipotecado a favor del banco</text>
+
+        <rect x="430" y="368" width="220" height="58" rx="4" fill="var(--surface-2)" stroke="currentColor" stroke-opacity=".28"/>
+        <text x="540" y="393" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13" font-weight="600" fill="currentColor">Rebis · gestora</text>
+        <text x="540" y="411" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor" opacity=".6">Dirección y ejecución del proyecto</text>
+
+        <g font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="currentColor">
+          <line x1="240" y1="200" x2="424" y2="200" stroke="var(--a)" stroke-width="1.8" marker-end="url(#arAc)"/>
+          <text x="332" y="176" text-anchor="middle" font-weight="600" fill="var(--a-ink)">① Préstamo participativo</text>
+          <text x="332" y="190" text-anchor="middle" opacity=".65" font-size="10.5">1.102.632 €</text>
+
+          <line x1="424" y1="252" x2="246" y2="252" stroke="var(--a)" stroke-width="1.8" marker-end="url(#arAc)"/>
+          <text x="335" y="268" text-anchor="middle" font-weight="600" fill="var(--a-ink)">⑥ Capital + interés participativo</text>
+          <text x="335" y="282" text-anchor="middle" opacity=".65" font-size="10.5">1.102.632 € + 205.574 €</text>
+
+          <line x1="540" y1="88" x2="540" y2="157" stroke="currentColor" stroke-opacity=".55" marker-end="url(#arA)"/>
+          <text x="556" y="118" font-size="11">② Hipoteca 673.750 €</text>
+          <text x="556" y="133" opacity=".6" font-size="10.5">55 % del precio de compra</text>
+
+          <line x1="650" y1="200" x2="834" y2="200" stroke="currentColor" stroke-opacity=".55" marker-end="url(#arA)"/>
+          <text x="742" y="176" text-anchor="middle">③ Compra, impuestos y reforma</text>
+          <text x="742" y="190" text-anchor="middle" opacity=".6" font-size="10.5">1.671.479 €</text>
+
+          <line x1="834" y1="252" x2="656" y2="252" stroke="currentColor" stroke-opacity=".55" marker-end="url(#arA)"/>
+          <text x="745" y="268" text-anchor="middle">④ Venta</text>
+          <text x="745" y="282" text-anchor="middle" opacity=".6" font-size="10.5">2.049.300 €</text>
+
+          <line x1="500" y1="285" x2="500" y2="362" stroke="currentColor" stroke-opacity=".45" marker-end="url(#arA)"/>
+          <line x1="580" y1="362" x2="580" y2="291" stroke="currentColor" stroke-opacity=".45" marker-end="url(#arA)"/>
+          <text x="668" y="318" font-size="11">Contrato de servicios</text>
+          <text x="668" y="333" opacity=".6" font-size="10.5">Comisión de gestión: 20 % del beneficio</text>
+
+          <path d="M430,320 L140,320 L140,276" fill="none" stroke="var(--a)" stroke-opacity=".75" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arAc)"/>
+          <text x="284" y="340" text-anchor="middle" fill="var(--a-ink)" font-weight="600">Garantía: prenda sobre las participaciones</text>
+          <text x="284" y="354" text-anchor="middle" opacity=".6" font-size="10.5">ante notario, inscrita en el Registro Mercantil</text>
+        </g>
+      </svg>
+      <figcaption><b>Usted no aparece en ningún registro español.</b> La sociedad es de Rebis, lo
+        que permite que el banco financie apoyándose en nuestro historial y nuestro aval personal.
+        Su protección no viene de la titularidad, sino del contrato y de la prenda sobre las
+        participaciones de esa misma sociedad.</figcaption>
+    </figure>
+
+    <div class="grid2">
+      <div class="stack">
+        <h3>Cómo cobra usted</h3>
+        <ol class="steps">
+          <li><b>Componente variable.</b> Participación proporcional en la ganancia neta del
+            proyecto, según el porcentaje de capital aportado. En la operación de referencia usted
+            aporta el 100 % del capital propio, de modo que recibe el 100 % del beneficio una vez
+            descontada la comisión de gestión del 20 %.</li>
+          <li><b>Componente fijo.</b> <span class="tag val">A definir</span> Los documentos
+            actuales no prevén un interés mínimo garantizado. Es negociable y recomendamos
+            discutirlo: un cupón preferente reduce su exposición al escenario malo a cambio de
+            ceder algo del escenario bueno.</li>
+          <li><b>Base de cálculo.</b> Un balance final detallado que incluye coste de adquisición
+            de la sociedad, gastos operativos, coste de compra del inmueble, honorarios legales,
+            fiscales y técnicos, coste de obra, ingresos por venta y por alquiler si los hubiera.</li>
+          <li><b>Momento del pago.</b> Un único pago al cierre de la venta, tras cancelar la
+            hipoteca. No hay pagos intermedios ni distribuciones parciales.</li>
+        </ol>
+      </div>
+
+      <div class="stack">
+        <h3>Qué le protege</h3>
+        <div class="card a">
+          <h4>Garantía prendaria</h4>
+          <p class="small" style="margin-top:8px">Prenda sobre las participaciones sociales de la
+            sociedad titular del inmueble, proporcional a su aporte. Se suscribe ante notario, se
+            inscribe en los libros societarios y se eleva al Registro Mercantil: es un acto de
+            público conocimiento.</p>
+        </div>
+        <div class="card a">
+          <h4>Opción de compra (alternativa)</h4>
+          <p class="small" style="margin-top:8px">Contrato de opción de compra de la sociedad a su
+            favor por el monto invertido, ejercitable si se incumplen los parámetros pactados o
+            transcurrido un plazo determinado.</p>
+        </div>
+        <div class="card a">
+          <h4>Control sin gestión</h4>
+          <ul class="clean" style="margin-top:var(--s3)">
+            <li>Acceso consultivo permanente a las cuentas bancarias de la sociedad.</li>
+            <li>Aprobación previa del balance inicial estimado del proyecto.</li>
+            <li>Consulta obligatoria si una partida supera un umbral de desvío sobre el
+              presupuesto. <span class="tag val">Umbral a definir</span></li>
+            <li>Aprobación obligatoria para vender por debajo de un precio mínimo.
+              <span class="tag val">Precio a definir</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout stop"><b>Lo que la garantía no cubre.</b> La prenda recae sobre las
+      participaciones de la sociedad, y lo que vale una participación es el inmueble menos la
+      hipoteca. El banco cobra primero: si el activo se vende por debajo de lo previsto, la
+      hipoteca se paga íntegra y la pérdida la absorbe su capital antes que nada. Además, el
+      préstamo participativo español se sitúa detrás de los demás acreedores comunes en caso de
+      concurso. Su garantía es real, pero es económicamente de segundo rango.</div>
+
+    <div class="grid2">
+      <div class="card">
+        <h4>Tratamiento legal, fiscal y contable</h4>
+        <dl class="kv" style="margin-top:var(--s4)">
+          <dt>Figura</dt><dd>Préstamo participativo español (RDL 7/1996): interés ligado al
+            resultado, subordinado a los acreedores comunes, computable como patrimonio neto a
+            efectos de reducción de capital y liquidación. <span class="tag val">Confirmar con abogado mercantil</span></dd>
+          <dt>Contable</dt><dd>Para la sociedad es pasivo, no fondos propios. Para usted es un
+            crédito, no una participación.</dd>
+          <dt>IS España</dt><dd>Los intereses son gasto deducible de la sociedad, de modo que el
+            beneficio repartido al inversor no soporta el 25 % del Impuesto sobre Sociedades.
+            <span class="tag val">Deducibilidad a confirmar</span></dd>
+          <dt>Salida</dt><dd>La devolución del principal no es renta: no soporta el impuesto del
+            10 % sobre retiro de capital que sí aplica a los dividendos.</dd>
+          <dt>Retención</dt><dd>Sobre los intereses sí puede haber retención española para no
+            residentes. En la liquidación real de San Andrés fue de 4.142 € sobre 130.636 € de
+            intereses — un 3,2 % efectivo, sin explicación en el archivo.
+            <span class="tag val">Tipo a determinar</span></dd>
+          <dt>Argentina</dt><dd>Renta de fuente extranjera, tributable en su declaración. El
+            impuesto pagado en España es computable como crédito fiscal.
+            <span class="tag val">Validar con su contador</span></dd>
+          <dt>Origen de fondos</dt><dd>El contrato debe incluir declaración expresa del acreedor de
+            que los fondos son de origen lícito y propio. No se admiten transferencias desde
+            sociedades offshore ni desde jurisdicciones de alto riesgo (Nevis, Panamá, BVI).</dd>
+        </dl>
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <h4>Ventajas</h4>
+          <ul class="clean" style="margin-top:var(--s3)">
+            <li><b>Para usted:</b> ninguna gestión ante organismos españoles; sin NIE, sin poderes,
+              sin apostillas. Sin responsabilidad civil, fiscal ni penal en España por los actos de
+              la sociedad. Un único impuesto sobre el beneficio, en su país. Entrada y salida
+              rápidas.</li>
+            <li><b>Para Rebis:</b> el banco financia sobre nuestro historial, lo que permite comprar
+              directamente con hipoteca en lugar de comprar y luego hipotecar. Agilidad para cerrar
+              operaciones en un mercado con oferta escasa.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Desventajas</h4>
+          <ul class="clean" style="margin-top:var(--s3)">
+            <li><b>Para usted:</b> no es dueño del activo ni de la sociedad; su posición es
+              contractual. En concurso, el préstamo participativo es subordinado. No controla la
+              gestión diaria ni la firma. Depende de que el balance final sea fiel.</li>
+            <li><b>Para Rebis:</b> avalamos la hipoteca con la sociedad y con patrimonio personal,
+              asumiendo el riesgo bancario. La sociedad soporta el interés participativo como deuda
+              exigible aunque el resultado sea ajustado.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="modelo-b">
+  <div class="stack-lg">
+    <div>
+      <div class="eyebrow"><span class="num">05</span> <span class="tag tb">Modelo B</span> Sociedad propia del inversor</div>
+      <h2>Usted es dueño de la sociedad que compra</h2>
+      <p class="sub">Usted constituye o adquiere una sociedad limitada española y es titular de sus
+        participaciones. Esa sociedad compra el inmueble, contrata la obra y lo vende. Rebis actúa
+        como administrador con facultades delegadas y como gestor del proyecto, mediante un
+        contrato de servicios.</p>
+    </div>
+
+    <figure>
+      <svg viewBox="0 0 1080 470" role="img" aria-label="Estructura con sociedad propia: el inversor obtiene NIE y otorga poder apostillado, aporta capital social y préstamo ordinario a su propia sociedad limitada española, que compra y reforma el inmueble; la hipoteca bancaria queda condicionada al scoring del nuevo titular; Rebis administra por poder y cobra comisión de gestión; la salida es devolución del préstamo más dividendo con retención">
+        <defs>
+          <marker id="arB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+          </marker>
+          <marker id="arBc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="var(--b)"/>
+          </marker>
+        </defs>
+
+        <rect x="430" y="30" width="220" height="58" rx="4" fill="var(--surface-2)" stroke="var(--b)" stroke-opacity=".5" stroke-dasharray="5 4"/>
+        <text x="540" y="55" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13" font-weight="600" fill="currentColor">Banco español</text>
+        <text x="540" y="73" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="var(--b-ink)">Sin historial del nuevo titular</text>
+
+        <rect x="40" y="152" width="200" height="146" rx="4" fill="var(--b-soft)" stroke="var(--b)" stroke-width="1.5"/>
+        <text x="140" y="182" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13.5" font-weight="600" fill="currentColor">Inversor</text>
+        <text x="140" y="201" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor" opacity=".7">Socio único</text>
+        <line x1="64" y1="216" x2="216" y2="216" stroke="currentColor" stroke-opacity=".2"/>
+        <text x="140" y="235" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".55" letter-spacing=".07em">REQUISITOS PREVIOS</text>
+        <text x="140" y="254" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor" opacity=".75">NIE</text>
+        <text x="140" y="271" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor" opacity=".75">Poder notarial apostillado</text>
+        <text x="140" y="288" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor" opacity=".75">Justificación de origen de fondos</text>
+
+        <rect x="430" y="163" width="220" height="122" rx="4" fill="var(--surface)" stroke="var(--b)" stroke-width="1.5"/>
+        <text x="540" y="196" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13.5" font-weight="600" fill="currentColor">Su sociedad</text>
+        <text x="540" y="215" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor" opacity=".7">SL española</text>
+        <text x="540" y="242" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="currentColor" opacity=".55" letter-spacing=".07em">TITULAR</text>
+        <text x="540" y="262" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12.5" font-weight="600" fill="var(--b-ink)">El inversor</text>
+
+        <rect x="840" y="178" width="200" height="92" rx="4" fill="var(--surface-2)" stroke="currentColor" stroke-opacity=".28"/>
+        <text x="940" y="212" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13.5" font-weight="600" fill="currentColor">El inmueble</text>
+        <text x="940" y="232" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor" opacity=".7">162 m² · Chamberí</text>
+        <text x="940" y="249" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor" opacity=".7">Propiedad de su sociedad</text>
+
+        <rect x="430" y="378" width="220" height="58" rx="4" fill="var(--surface-2)" stroke="currentColor" stroke-opacity=".28"/>
+        <text x="540" y="403" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13" font-weight="600" fill="currentColor">Rebis · administrador</text>
+        <text x="540" y="421" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor" opacity=".6">Por poder con facultades cuantificadas</text>
+
+        <g font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="currentColor">
+          <line x1="240" y1="196" x2="424" y2="196" stroke="var(--b)" stroke-width="1.8" marker-end="url(#arBc)"/>
+          <text x="316" y="172" text-anchor="middle" font-size="11" font-weight="600" fill="var(--b-ink)">① Capital social + préstamo ordinario</text>
+          <text x="316" y="186" text-anchor="middle" opacity=".65" font-size="10.5">1.102.632 € · interés muy bajo</text>
+
+          <line x1="424" y1="252" x2="246" y2="252" stroke="var(--b)" stroke-width="1.8" marker-end="url(#arBc)"/>
+          <text x="335" y="268" text-anchor="middle" font-weight="600" fill="var(--b-ink)">⑥ Devolución del préstamo + dividendo</text>
+          <text x="335" y="282" text-anchor="middle" opacity=".65" font-size="10.5">1.102.632 € + 138.763 € tras impuestos</text>
+
+          <line x1="540" y1="88" x2="540" y2="157" stroke="var(--b)" stroke-opacity=".8" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arBc)"/>
+          <text x="556" y="114" font-size="11" fill="var(--b-ink)" font-weight="600">② Hipoteca — no asegurada</text>
+          <text x="556" y="129" opacity=".65" font-size="10.5">Compliance y riesgos evalúan al</text>
+          <text x="556" y="143" opacity=".65" font-size="10.5">nuevo titular; puede denegarse o demorar</text>
+
+          <line x1="650" y1="200" x2="834" y2="200" stroke="currentColor" stroke-opacity=".55" marker-end="url(#arB)"/>
+          <text x="742" y="176" text-anchor="middle">③ Compra, impuestos y reforma</text>
+          <text x="742" y="190" text-anchor="middle" opacity=".6" font-size="10.5">1.671.479 €</text>
+
+          <line x1="834" y1="252" x2="656" y2="252" stroke="currentColor" stroke-opacity=".55" marker-end="url(#arB)"/>
+          <text x="745" y="268" text-anchor="middle">④ Venta</text>
+          <text x="745" y="282" text-anchor="middle" opacity=".6" font-size="10.5">2.049.300 €</text>
+
+          <line x1="500" y1="285" x2="500" y2="372" stroke="currentColor" stroke-opacity=".45" marker-end="url(#arB)"/>
+          <line x1="580" y1="372" x2="580" y2="291" stroke="currentColor" stroke-opacity=".45" marker-end="url(#arB)"/>
+          <text x="726" y="322" font-size="11">Contrato de servicios + poder de administrador</text>
+          <text x="726" y="337" opacity=".6" font-size="10.5">Comisión de gestión: 20 % del beneficio</text>
+
+          <rect x="376" y="303" width="330" height="46" rx="3" fill="var(--b-soft)" stroke="var(--b)" stroke-opacity=".45"/>
+          <text x="390" y="322" font-size="11" font-weight="600" fill="var(--b-ink)">⑤ Impuesto sobre Sociedades: 25 % en España</text>
+          <text x="390" y="338" font-size="10.5" opacity=".7">Antes de que el beneficio salga de la sociedad</text>
+        </g>
+      </svg>
+      <figcaption><b>La diferencia estructural está en dos puntos:</b> la línea del banco pasa a ser
+        discontinua — la financiación deja de apoyarse en el historial de Rebis — y aparece un
+        escalón fiscal, el Impuesto sobre Sociedades, entre el beneficio de la operación y su
+        bolsillo.</figcaption>
+    </figure>
+
+    <div class="grid2">
+      <div class="stack">
+        <h3>Cómo se monta y se opera</h3>
+        <ol class="steps">
+          <li><b>Sociedad vehículo.</b> Se adquiere una sociedad sin actividad previa a TMF Group,
+            entregada en 7 días hábiles con cuenta bancaria abierta y antigüedad inferior a
+            6 meses. Evita los 45 días de una constitución tradicional.</li>
+          <li><b>NIE y poder.</b> Usted otorga en Buenos Aires un poder notarial conforme a la
+            legislación española, apostillado ante el Ministerio del Interior, que habilita a Rebis
+            a tramitar su NIE, adquirir las participaciones a su nombre y actuar como administrador.</li>
+          <li><b>Modelo ejecutivo de delegación.</b> El poder fija facultades concretas y
+            cuantificadas: comprar hasta un importe, hipotecar hasta un porcentaje del valor, pagar
+            gastos operativos dentro de un límite, vender por encima de un precio. Es la alternativa
+            recomendada al modelo tradicional, en el que cada decisión exige un acta de junta
+            firmada en físico por todos los socios y enviada por mensajería internacional.</li>
+          <li><b>Aporte del capital.</b> Recomendamos que entre a la sociedad mayoritariamente como
+            préstamo ordinario a interés muy bajo y no como capital social: la devolución del
+            principal no soporta el impuesto del 10 % sobre retiro de capital, y evita tributar en
+            Argentina por un interés que no ha existido económicamente.</li>
+          <li><b>Alternativa transitoria.</b> Si hay que actuar rápido para no perder la operación,
+            Rebis adquiere inicialmente la sociedad a su nombre, usted firma un préstamo ordinario
+            por el importe de las arras (10 % del precio), y después la sociedad se le cede a cambio
+            de los préstamos otorgados.</li>
+        </ol>
+      </div>
+
+      <div class="stack">
+        <h3>Qué controla y qué le cuesta</h3>
+        <div class="card b">
+          <h4>Control y derechos</h4>
+          <ul class="clean" style="margin-top:var(--s3)">
+            <li>Propiedad del 100 % de las participaciones y, a través de ellas, del inmueble.</li>
+            <li>Derecho de información pleno como socio: cuentas anuales, libros societarios,
+              contabilidad, extractos bancarios.</li>
+            <li>Poder de revocar el poder otorgado a Rebis y cambiar el administrador.</li>
+            <li>Decisión final sobre venta, refinanciación o cambio de estrategia — dentro de los
+              límites que usted mismo fije en el poder.</li>
+          </ul>
+        </div>
+        <div class="card b">
+          <h4>Costes de estructura</h4>
+          <div class="tw" style="margin-top:var(--s3);border:0">
+            <table style="min-width:0">
+              <tbody>
+                <tr><td class="lbl">Sociedad vía TMF Group</td><td class="n">7.000 €</td></tr>
+                <tr><td class="lbl">Restitución en cuenta</td><td class="n pos">−2.300 €</td></tr>
+                <tr><td class="lbl">Gastos legales y notariales</td><td class="n">2.000 – 4.000 €</td></tr>
+                <tr><td class="lbl">Mantenimiento societario anual<br><span class="note">contable, legal y afines</span></td><td class="n">9.000 €</td></tr>
+                <tr><td class="lbl">NIE, apostilla, traducciones</td><td class="n"><span class="tag val">Sin dato</span></td></tr>
+                <tr class="tot"><td>Estimado por operación de 11 meses</td><td class="n">≈ 15.950 €</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="note" style="margin-top:var(--s3)">Ambos modelos necesitan una sociedad, así que
+            este coste existe en los dos. La diferencia es quién lo soporta: en el Modelo A es un
+            gasto del proyecto; en el Modelo B es enteramente suyo, y se suman las gestiones
+            personales que el Modelo A no requiere.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout stop"><b>El punto crítico es la hipoteca.</b> Nuestro acceso al crédito de
+      CaixaBank descansa en el historial de nuestra sociedad y en un aval suscrito por nuestra
+      empresa y por nosotros personalmente. Si el titular de la sociedad adquirente es usted y no
+      figuramos como socios, quienes sí figuran carecen de historial crediticio ante la entidad.
+      El banco pediría declaración jurada, justificación del origen de los fondos y certificación
+      de ingresos de los socios, todo evaluado por Compliance y Riesgos — con demoras
+      considerables y sin certeza de aprobación. Si la financiación no llega, la operación pasa a
+      ser sin apalancamiento, y eso cambia tanto el retorno como el tamaño del activo al que puede
+      acceder.</div>
+
+    <div class="grid2">
+      <div class="card">
+        <h4>Tratamiento legal, fiscal y contable</h4>
+        <dl class="kv" style="margin-top:var(--s4)">
+          <dt>Societario</dt><dd>SL española con socio único. Obligaciones plenas: libros, cuentas
+            anuales depositadas en el Registro Mercantil, declaración de titular real.</dd>
+          <dt>IS España</dt><dd>25 % sobre el beneficio de la sociedad. El documento interno señala
+            un 15 % para los dos primeros ejercicios con beneficio de una sociedad de nueva
+            creación. <span class="tag val">Verificar si aplica a una sociedad comprada, no constituida</span></dd>
+          <dt>Salida</dt><dd>Dividendo con retención del 10 % sobre retiro de capital según nuestros
+            documentos; computable como crédito fiscal en su declaración argentina.
+            <span class="tag val">Confirmar tipo aplicable y convenio España–Argentina</span></dd>
+          <dt>Alternativa</dt><dd>La parte aportada como préstamo ordinario se devuelve sin
+            retención; solo el excedente se reparte como dividendo. Es la razón de estructurar el
+            aporte principalmente como préstamo.</dd>
+          <dt>Origen de fondos</dt><dd>Al ser usted el adquirente, el notario y el banco español
+            exigirán justificación documental: declaraciones juradas, detalle de ingresos del último
+            año y extractos bancarios con trazabilidad.</dd>
+          <dt>Responsabilidad</dt><dd>Como socio, limitada al capital aportado. Pero asume la
+            posición de titular ante la Administración española, y las obligaciones formales y de
+            información que conlleva.</dd>
+          <dt>Argentina</dt><dd>Tenencia de participaciones en el exterior, con las obligaciones
+            informativas y patrimoniales correspondientes.
+            <span class="tag val">Validar con su contador</span></dd>
+        </dl>
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <h4>Ventajas</h4>
+          <ul class="clean" style="margin-top:var(--s3)">
+            <li><b>Para usted:</b> titularidad directa del activo, sin depender de una garantía
+              sobre participaciones ajenas. Control societario pleno y capacidad de sustituir al
+              gestor. Su patrimonio en España es visible y propio, útil si el objetivo va más allá
+              de una operación puntual.</li>
+            <li><b>Para Rebis:</b> no avalamos la hipoteca con patrimonio personal. Nuestra
+              exposición se limita a la calidad de la gestión.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Desventajas</h4>
+          <ul class="clean" style="margin-top:var(--s3)">
+            <li><b>Para usted:</b> doble escalón fiscal (IS del 25 % y retención al repatriar).
+              Coste y carga administrativa societaria a su cargo. Trámites personales previos
+              (NIE, poder apostillado). Y, sobre todo, el riesgo de no obtener financiación
+              bancaria.</li>
+            <li><b>Para Rebis:</b> pérdida de agilidad. En el modelo tradicional de delegación,
+              cada decisión relevante exige un acta firmada en físico por todos los socios y
+              enviada por mensajería internacional — inviable en un mercado donde la oferta es
+              escasa y las oportunidades se cierran en días.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="comparacion">
+  <div class="stack-lg">
+    <div>
+      <div class="eyebrow"><span class="num">06</span> Comparación</div>
+      <h2>El mismo beneficio, dos caminos</h2>
+      <p class="sub">La operación es idéntica, el capital es idéntico y la comisión de gestión es
+        idéntica. Todo lo que separa un retorno del otro ocurre después de que el negocio ya generó
+        su beneficio: es puramente fiscal y societario.</p>
+    </div>
+
+    <figure>
+      <svg viewBox="0 0 1080 480" role="img" aria-label="Comparación de los dos caminos: el beneficio bruto de 272.918 euros se reduce por costes de vehículo y comisión de gestión hasta una base de reparto de 205.574 euros; en el Modelo A llega íntegra al inversor porque el interés participativo es deducible, mientras que en el Modelo B soporta un 25 por ciento de Impuesto sobre Sociedades y un 10 por ciento de retención por dividendo, quedando en 138.763 euros">
+        <defs>
+          <marker id="arC" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <rect x="390" y="18" width="300" height="52" rx="4" fill="var(--surface-2)" stroke="currentColor" stroke-opacity=".35"/>
+        <text x="540" y="40" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" fill="currentColor" opacity=".7">Beneficio bruto de la operación</text>
+        <text x="540" y="60" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="15" font-weight="500" fill="currentColor">272.918 €</text>
+
+        <line x1="540" y1="70" x2="540" y2="90" stroke="currentColor" stroke-opacity=".45" marker-end="url(#arC)"/>
+        <text x="706" y="88" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="currentColor" opacity=".7">− Costes del vehículo societario · 15.950 €</text>
+
+        <rect x="390" y="96" width="300" height="46" rx="4" fill="var(--surface)" stroke="currentColor" stroke-opacity=".3"/>
+        <text x="540" y="114" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="currentColor" opacity=".7">Beneficio del proyecto</text>
+        <text x="540" y="133" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="14" fill="currentColor">256.968 €</text>
+
+        <line x1="540" y1="142" x2="540" y2="168" stroke="currentColor" stroke-opacity=".45" marker-end="url(#arC)"/>
+        <text x="706" y="162" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="currentColor" opacity=".7">− Comisión de gestión Rebis, 20 % · 51.394 €</text>
+
+        <rect x="390" y="174" width="300" height="46" rx="4" fill="var(--surface)" stroke="currentColor" stroke-opacity=".45" stroke-width="1.5"/>
+        <text x="540" y="192" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="currentColor" opacity=".7">Base de reparto para el inversor</text>
+        <text x="540" y="211" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="14" font-weight="500" fill="currentColor">205.574 €</text>
+
+        <path d="M540,220 L540,246 M250,246 L830,246 M250,246 L250,274 M830,246 L830,274" fill="none" stroke="currentColor" stroke-opacity=".4"/>
+        <line x1="250" y1="262" x2="250" y2="276" stroke="currentColor" stroke-opacity=".4" marker-end="url(#arC)"/>
+        <line x1="830" y1="262" x2="830" y2="276" stroke="currentColor" stroke-opacity=".4" marker-end="url(#arC)"/>
+
+        <text x="250" y="298" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" letter-spacing=".11em" fill="var(--a-ink)">MODELO A · PRÉSTAMO PARTICIPATIVO</text>
+        <text x="830" y="298" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" letter-spacing=".11em" fill="var(--b-ink)">MODELO B · SOCIEDAD PROPIA</text>
+
+        <rect x="100" y="312" width="300" height="60" rx="4" fill="var(--a-soft)" stroke="var(--a)" stroke-opacity=".6"/>
+        <text x="250" y="334" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="currentColor">El interés participativo es gasto deducible</text>
+        <text x="250" y="356" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="600" fill="var(--a-ink)">Impuesto sobre Sociedades: 0 €</text>
+
+        <rect x="680" y="312" width="300" height="60" rx="4" fill="var(--b-soft)" stroke="var(--b)" stroke-opacity=".6"/>
+        <text x="830" y="334" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="currentColor">El beneficio tributa antes de salir</text>
+        <text x="830" y="356" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="600" fill="var(--b-ink)">− IS 25 % · 51.394 €&#160;&#160;&#160;− Dividendo 10 % · 15.418 €</text>
+
+        <line x1="250" y1="372" x2="250" y2="392" stroke="var(--a)" stroke-opacity=".7" marker-end="url(#arC)"/>
+        <line x1="830" y1="372" x2="830" y2="392" stroke="var(--b)" stroke-opacity=".7" marker-end="url(#arC)"/>
+
+        <rect x="100" y="398" width="300" height="66" rx="4" fill="var(--surface)" stroke="var(--a)" stroke-width="2"/>
+        <text x="250" y="420" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="currentColor" opacity=".7">Al inversor</text>
+        <text x="250" y="444" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="17" font-weight="500" fill="var(--a-ink)">205.574 €</text>
+        <text x="250" y="459" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor" opacity=".7">18,64 % en 11 meses · 20,50 % anualizado</text>
+
+        <rect x="680" y="398" width="300" height="66" rx="4" fill="var(--surface)" stroke="var(--b)" stroke-width="2"/>
+        <text x="830" y="420" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="currentColor" opacity=".7">Al inversor</text>
+        <text x="830" y="444" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="17" font-weight="500" fill="var(--b-ink)">138.763 €</text>
+        <text x="830" y="459" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor" opacity=".7">12,58 % en 11 meses · 13,80 % anualizado</text>
+      </svg>
+      <figcaption><b>La diferencia son 66.811 € sobre el mismo negocio</b> — un 6,1 % adicional
+        sobre el capital, que en el Modelo B se queda en la Hacienda española. La contrapartida es
+        que en el Modelo B usted es dueño del activo; en el Modelo A es acreedor con garantía.
+        Las cifras suponen que la deducibilidad del interés participativo se confirma y que la
+        retención por dividendo es del 10 %: ambos extremos deben validarse.</figcaption>
+    </figure>
+
+    <div>
+      <h3 style="margin-bottom:var(--s4)">Cuadro comparativo</h3>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:19%">Criterio</th>
+              <th class="ca" style="width:40%">Modelo A · Préstamo participativo</th>
+              <th class="cb" style="width:41%">Modelo B · Sociedad propia del inversor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Capital requerido</b></td>
+              <td class="ca">1.102.632 € para un activo de 1.225.000 €. Desembolso máximo de caja:
+                997.730 €. Mínimo operativo indicado por Rebis: 800.000 €.</td>
+              <td class="cb">Igual si el banco financia. Si no financia, hacen falta 1.719.421 €
+                para la misma operación — o el mismo capital compra un activo de 781.000 €.</td>
+            </tr>
+            <tr>
+              <td><b>Rentabilidad esperada</b></td>
+              <td class="ca"><b>18,64 %</b> en 11 meses · 20,50 % anualizado (escenario base).
+                Rango entre escenarios: 1,66 % y 32,48 %.</td>
+              <td class="cb"><b>12,58 %</b> en 11 meses · 13,80 % anualizado (escenario base).
+                Rango entre escenarios: 1,12 % y 21,92 %.</td>
+            </tr>
+            <tr>
+              <td><b>Plazo estimado</b></td>
+              <td class="ca">11 meses desde la escritura. Unos 61 días previos de preparación.
+                Sin plazo máximo pactado. <span class="tag val">A definir</span></td>
+              <td class="cb">El mismo, más el tiempo de NIE, poder apostillado y evaluación
+                bancaria del nuevo titular, que puede añadir semanas.</td>
+            </tr>
+            <tr>
+              <td><b>Liquidez</b></td>
+              <td class="ca">Nula durante la operación. Un único cobro al cierre. La salida
+                anticipada exigiría refinanciar o ejecutar la garantía.</td>
+              <td class="cb">Nula durante la operación. Además, la venta de participaciones a un
+                tercero es lenta y requiere comprador para una SL con un único activo.</td>
+            </tr>
+            <tr>
+              <td><b>Riesgo</b></td>
+              <td class="ca">Riesgo de negocio íntegro: si el activo se vende mal, el banco cobra
+                primero y la pérdida es suya. Se suma el riesgo de contraparte: usted depende de
+                Rebis como titular de la sociedad.</td>
+              <td class="cb">El mismo riesgo de negocio, sin riesgo de contraparte sobre la
+                titularidad. A cambio, riesgo de que la operación no llegue a apalancarse y riesgo
+                de exposición formal ante la Administración española.</td>
+            </tr>
+            <tr>
+              <td><b>Protección del capital</b></td>
+              <td class="ca">Prenda notarial sobre las participaciones, inscrita en el Registro
+                Mercantil, u opción de compra de la sociedad por el monto invertido. Acceso
+                consultivo a las cuentas. Económicamente de segundo rango tras la hipoteca, y
+                subordinado en concurso.</td>
+              <td class="cb">Propiedad directa. Ninguna garantía intermedia que ejecutar: si algo
+                sale mal, el activo ya es de su sociedad. La hipoteca sigue teniendo preferencia
+                sobre el inmueble.</td>
+            </tr>
+            <tr>
+              <td><b>Complejidad jurídica</b></td>
+              <td class="ca">Baja para usted. Dos contratos: préstamo participativo con garantía y
+                contrato de servicios con Rebis. Ninguna comparecencia ante organismos españoles.</td>
+              <td class="cb">Alta. NIE, poder notarial apostillado conforme a legislación española,
+                adquisición de participaciones, cambio de administrador, modificación de sede y
+                objeto social, escrituras de elevación a público.</td>
+            </tr>
+            <tr>
+              <td><b>Complejidad administrativa</b></td>
+              <td class="ca">Ninguna una vez firmado el contrato. Rebis gestiona todo el ciclo sin
+                requerir nuevas actuaciones suyas.</td>
+              <td class="cb">Con poder ejecutivo, moderada. Con delegación tradicional, alta: cada
+                decisión relevante exige acta de junta firmada en original y enviada por mensajería
+                internacional.</td>
+            </tr>
+            <tr>
+              <td><b>Costes de estructura</b></td>
+              <td class="ca">≈ 15.950 € por operación, soportados por el proyecto (y por tanto
+                compartidos con Rebis en la proporción del reparto).</td>
+              <td class="cb">Los mismos ≈ 15.950 €, íntegramente a su cargo, más NIE, apostilla y
+                traducciones. <span class="tag val">Sin dato de coste</span></td>
+            </tr>
+            <tr>
+              <td><b>Tratamiento fiscal</b></td>
+              <td class="ca">Un solo nivel de imposición. El interés es gasto deducible de la
+                sociedad; la devolución del principal no soporta retención por retiro de capital.
+                Tributa en Argentina como renta de fuente extranjera.</td>
+              <td class="cb">Dos niveles. IS del 25 % en España (15 % si califica como sociedad de
+                nueva creación) y retención al distribuir el dividendo. Ambos computables como
+                crédito fiscal en Argentina.</td>
+            </tr>
+            <tr>
+              <td><b>Control del inversor</b></td>
+              <td class="ca">Contractual, no societario. Aprueba el balance inicial, es consultado
+                ante desvíos y ante ventas por debajo del precio mínimo, y consulta las cuentas.
+                No firma ni decide.</td>
+              <td class="cb">Societario y pleno. Decide, revoca poderes, cambia administrador y fija
+                por escrito los límites de actuación de Rebis.</td>
+            </tr>
+            <tr>
+              <td><b>Escalabilidad</b></td>
+              <td class="ca">Alta. Cada operación es un contrato nuevo sobre una sociedad nueva; el
+                acceso al crédito bancario se mantiene y permite operar activos mayores con el
+                mismo capital.</td>
+              <td class="cb">Media. La sociedad puede reutilizarse en operaciones sucesivas —
+                ahorrando el coste de constitución— pero sin apalancamiento el tamaño del activo
+                queda limitado por el capital disponible.</td>
+            </tr>
+            <tr>
+              <td><b>Flexibilidad para entrar y salir</b></td>
+              <td class="ca">Alta a la entrada: se firma y se transfiere. A la salida, la operación
+                se liquida sola al vender. Entre medias, no hay salida ordenada.</td>
+              <td class="cb">Baja a la entrada por los trámites previos. A la salida, además de
+                vender el activo hay que decidir qué se hace con la sociedad: mantenerla para la
+                siguiente operación o liquidarla, con su coste.</td>
+            </tr>
+            <tr class="tot">
+              <td>En una frase</td>
+              <td class="ca">Más rentable, más simple y más rápido, a cambio de ser acreedor en vez
+                de propietario.</td>
+              <td class="cb">Propiedad y control reales, a cambio de menor rentabilidad neta, más
+                carga administrativa y riesgo de quedarse sin hipoteca.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ejemplo">
+  <div class="stack-lg">
+    <div>
+      <div class="eyebrow"><span class="num">07</span> Ejemplo económico</div>
+      <h2>Un millón cien mil euros, paso a paso</h2>
+      <p class="sub">La misma operación, el mismo capital, los mismos costes y la misma comisión de
+        gestión, seguidos desde la transferencia inicial hasta el euro que vuelve a su cuenta.</p>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:44%">Concepto</th>
+            <th class="n ca" style="width:28%">Modelo A</th>
+            <th class="n cb" style="width:28%">Modelo B</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="sec"><td colspan="3">1 · Capital inicial y su aplicación</td></tr>
+          <tr><td>Capital aportado por el inversor</td><td class="n ca">1.102.632 €</td><td class="n cb">1.102.632 €</td></tr>
+          <tr><td>Hipoteca bancaria · 55 % del precio de compra</td><td class="n ca">673.750 €</td><td class="n cb">673.750 €&#160;<span class="tag val">Sujeta a aprobación</span></td></tr>
+          <tr class="tot"><td>Fondos totales aplicados a la operación</td><td class="n ca">1.776.382 €</td><td class="n cb">1.776.382 €</td></tr>
+
+          <tr class="sec"><td colspan="3">2 · Operaciones realizadas</td></tr>
+          <tr><td class="lbl">Compra del inmueble · 162 m² a 7.562 €/m²</td><td class="n ca">−1.225.000 €</td><td class="n cb">−1.225.000 €</td></tr>
+          <tr><td class="lbl">Impuestos y gastos de adquisición</td><td class="n ca">−74.862 €</td><td class="n cb">−74.862 €</td></tr>
+          <tr><td class="lbl">Gastos de financiación de la hipoteca</td><td class="n ca">−53.592 €</td><td class="n cb">−53.592 €</td></tr>
+          <tr><td class="lbl">Obra, muebles, imprevistos y licencias</td><td class="n ca">−318.025 €</td><td class="n cb">−318.025 €</td></tr>
+          <tr><td class="lbl">Gastos de venta y plusvalía municipal</td><td class="n ca">−104.903 €</td><td class="n cb">−104.903 €</td></tr>
+          <tr class="tot"><td>Coste total del proyecto</td><td class="n ca">−1.776.382 €</td><td class="n cb">−1.776.382 €</td></tr>
+
+          <tr class="sec"><td colspan="3">3 · Ingresos y resultado</td></tr>
+          <tr><td>Venta del inmueble reformado · 12.650 €/m²</td><td class="n ca pos">2.049.300 €</td><td class="n cb pos">2.049.300 €</td></tr>
+          <tr class="tot"><td>Beneficio bruto</td><td class="n ca">272.918 €</td><td class="n cb">272.918 €</td></tr>
+          <tr><td class="lbl">Costes del vehículo societario · sociedad, legales, mantenimiento</td><td class="n ca">−15.950 €</td><td class="n cb">−15.950 €</td></tr>
+          <tr><td class="lbl">Comisión de gestión Rebis · 20 %</td><td class="n ca">−51.394 €</td><td class="n cb">−51.394 €</td></tr>
+          <tr class="tot"><td>Base de reparto para el inversor</td><td class="n ca">205.574 €</td><td class="n cb">205.574 €</td></tr>
+
+          <tr class="sec"><td colspan="3">4 · Impuestos</td></tr>
+          <tr><td>Impuesto sobre Sociedades en España · 25 %</td><td class="n ca">0 €<br><span class="note">El interés participativo es gasto deducible</span></td><td class="n cb neg">−51.394 €</td></tr>
+          <tr><td>Retención por salida de capital · dividendo, 10 %</td><td class="n ca">0 €<br><span class="note">La devolución del principal no es renta</span></td><td class="n cb neg">−15.418 €</td></tr>
+          <tr><td>Retención española sobre los intereses</td><td class="n ca"><span class="tag val">A determinar</span></td><td class="n cb">—</td></tr>
+          <tr><td>Impuesto a las Ganancias en Argentina</td><td class="n ca"><span class="tag val">Fuera de alcance</span></td><td class="n cb"><span class="tag val">Fuera de alcance</span></td></tr>
+
+          <tr class="sec"><td colspan="3">5 · Retorno del inversor y recuperación del capital</td></tr>
+          <tr><td>Retorno del período</td><td class="n ca pos">205.574 €</td><td class="n cb pos">138.763 €</td></tr>
+          <tr><td>Devolución íntegra del capital</td><td class="n ca">1.102.632 €</td><td class="n cb">1.102.632 €</td></tr>
+          <tr class="tot"><td>Total recibido en el mes 11, en un solo pago</td><td class="n ca">1.308.206 €</td><td class="n cb">1.241.395 €</td></tr>
+          <tr class="tot"><td>Retorno sobre el capital · 11 meses</td><td class="n ca">18,64 %</td><td class="n cb">12,58 %</td></tr>
+          <tr class="tot"><td>Retorno anualizado</td><td class="n ca">20,50 %</td><td class="n cb">13,80 %</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Las cifras de las secciones 1 a 3 salen íntegras del <span class="mono">Modelo de
+      Flipping Rebis v1</span>, cuyo motor de cálculo reproduce exactamente los cash-flows reales de
+      Ruiz Jiménez 3. El Impuesto a las Ganancias argentino queda fuera porque depende de su
+      situación fiscal personal; los impuestos pagados en España son computables allí como crédito.
+      Si la sociedad calificara para el tipo reducido del 15 %, el retorno del Modelo B subiría a
+      157.264 € (14,26 %).</p>
+
+    <div class="stack">
+      <h3>Los tres escenarios</h3>
+      <div class="legend">
+        <span><i class="sw" style="background:var(--a)"></i> Modelo A · préstamo participativo</span>
+        <span><i class="sw" style="background:var(--b)"></i> Modelo B · sociedad propia</span>
+        <span style="color:var(--ink-3)">Retorno sobre el capital en el plazo de cada escenario</span>
+      </div>
+      <div class="chart-host">
+      <figure>
+        <svg viewBox="0 0 1080 330" role="img" aria-label="Retorno sobre capital por escenario: conservador 1,66 por ciento en el modelo A frente a 1,12 en el B; base 18,64 frente a 12,58; optimista 32,48 frente a 21,92" id="escchart">
+          <g stroke="currentColor" stroke-opacity=".1">
+            <line x1="96" y1="197.1" x2="1040" y2="197.1"/>
+            <line x1="96" y1="134.3" x2="1040" y2="134.3"/>
+            <line x1="96" y1="71.4" x2="1040" y2="71.4"/>
+          </g>
+          <line x1="96" y1="260" x2="1040" y2="260" stroke="currentColor" stroke-opacity=".38"/>
+          <g font-family="IBM Plex Mono, monospace" font-size="10.5" fill="currentColor" opacity=".55" text-anchor="end">
+            <text x="84" y="75.4">30 %</text><text x="84" y="138.3">20 %</text>
+            <text x="84" y="201.1">10 %</text><text x="84" y="264">0</text>
+          </g>
+          <path d="M144,260 L144,253.6 Q144,249.6 148,249.6 L214,249.6 Q218,249.6 218,253.6 L218,260 Z" fill="var(--a)"/><path d="M222,260 L222,257.0 Q222,253.0 226,253.0 L292,253.0 Q296,253.0 296,257.0 L296,260 Z" fill="var(--b)"/><path d="M464,260 L464,146.8 Q464,142.8 468,142.8 L534,142.8 Q538,142.8 538,146.8 L538,260 Z" fill="var(--a)"/><path d="M542,260 L542,184.9 Q542,180.9 546,180.9 L612,180.9 Q616,180.9 616,184.9 L616,260 Z" fill="var(--b)"/><path d="M784,260 L784,59.8 Q784,55.8 788,55.8 L854,55.8 Q858,55.8 858,59.8 L858,260 Z" fill="var(--a)"/><path d="M862,260 L862,126.2 Q862,122.2 866,122.2 L932,122.2 Q936,122.2 936,126.2 L936,260 Z" fill="var(--b)"/>
+          <g font-family="IBM Plex Mono, monospace" font-size="12" font-weight="500" fill="currentColor"><text x="181" y="240.6" text-anchor="middle">1,66 %</text><text x="259" y="244.0" text-anchor="middle">1,12 %</text><text x="501" y="133.8" text-anchor="middle">18,64 %</text><text x="579" y="171.9" text-anchor="middle">12,58 %</text><text x="821" y="46.8" text-anchor="middle">32,48 %</text><text x="899" y="113.2" text-anchor="middle">21,92 %</text></g>
+          <g font-family="IBM Plex Sans, sans-serif" font-size="12.5" fill="currentColor" text-anchor="middle" font-weight="600"><text x="220" y="286">Conservador</text><text x="540" y="286">Base</text><text x="860" y="286">Optimista</text></g>
+          <g font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor" text-anchor="middle"><text x="220" y="303" opacity=".6" font-size="10.5">13 meses</text><text x="540" y="303" opacity=".6" font-size="10.5">11 meses</text><text x="860" y="303" opacity=".6" font-size="10.5">10 meses</text></g>
+        <rect data-hit x="144" y="40" width="74" height="220" fill="transparent" data-s="Conservador" data-mod="Modelo A" data-v="1.66" data-m="13"/><rect data-hit x="222" y="40" width="74" height="220" fill="transparent" data-s="Conservador" data-mod="Modelo B" data-v="1.12" data-m="13"/><rect data-hit x="464" y="40" width="74" height="220" fill="transparent" data-s="Base" data-mod="Modelo A" data-v="18.64" data-m="11"/><rect data-hit x="542" y="40" width="74" height="220" fill="transparent" data-s="Base" data-mod="Modelo B" data-v="12.58" data-m="11"/><rect data-hit x="784" y="40" width="74" height="220" fill="transparent" data-s="Optimista" data-mod="Modelo A" data-v="32.48" data-m="10"/><rect data-hit x="862" y="40" width="74" height="220" fill="transparent" data-s="Optimista" data-mod="Modelo B" data-v="21.92" data-m="10"/></svg>
+        <figcaption><b>El escenario conservador borra casi todo el retorno en ambos modelos.</b>
+          Combina un precio de venta un 8 % menor, una compra un 3 % más cara, una obra un 10 % por
+          encima de presupuesto y dos meses más de plazo — desviaciones perfectamente ordinarias en
+          este negocio, cada una por separado. Juntas dejan la operación en el filo de la
+          rentabilidad. Es el escenario que conviene mirar primero.</figcaption>
+      </figure>      </div>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead>
+          <tr><th>Escenario</th><th class="n">Beneficio bruto</th><th class="n">Base de reparto</th>
+          <th class="n ca">Modelo A · retorno</th><th class="n cb">Modelo B · retorno</th><th class="n">Plazo</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>Conservador</b><br><span class="note">Venta −8 %, compra +3 %, obra +10 %, +2 meses</span></td>
+            <td class="n">39.845 €</td><td class="n">19.116 €</td>
+            <td class="n ca">19.116 €<br>1,66 %</td><td class="n cb">12.903 €<br>1,12 %</td><td class="n">13 m</td></tr>
+          <tr><td><b>Base</b><br><span class="note">Los supuestos de García Paredes 21</span></td>
+            <td class="n">272.918 €</td><td class="n">205.574 €</td>
+            <td class="n ca">205.574 €<br>18,64 %</td><td class="n cb">138.763 €<br>12,58 %</td><td class="n">11 m</td></tr>
+          <tr><td><b>Optimista</b><br><span class="note">Venta +6 %, compra −3 %, obra −5 %, −1 mes</span></td>
+            <td class="n">449.876 €</td><td class="n">347.141 €</td>
+            <td class="n ca">347.141 €<br>32,48 %</td><td class="n cb">234.320 €<br>21,92 %</td><td class="n">10 m</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid2">
+      <div class="card b">
+        <h4>Qué pasa en el Modelo B si el banco no financia</h4>
+        <p class="small" style="margin-top:var(--s3)">Es el escenario que hay que tener presente,
+          porque el propio análisis de Rebis lo señala como el riesgo principal de esta estructura.
+          Sin hipoteca, hay dos caminos:</p>
+        <div class="tw" style="margin-top:var(--s4);border:0">
+          <table style="min-width:0">
+            <thead><tr><th></th><th class="n">Misma operación</th><th class="n">Mismo capital</th></tr></thead>
+            <tbody>
+              <tr><td class="lbl">Capital necesario</td><td class="n">1.719.421 €</td><td class="n">1.102.632 €</td></tr>
+              <tr><td class="lbl">Precio de compra</td><td class="n">1.225.000 €</td><td class="n">781.062 €</td></tr>
+              <tr><td class="lbl">Precio de venta</td><td class="n">2.049.300 €</td><td class="n">1.306.638 €</td></tr>
+              <tr><td class="lbl">Beneficio bruto</td><td class="n">329.879 €</td><td class="n">204.005 €</td></tr>
+              <tr><td class="lbl">Retorno del inversor</td><td class="n">169.522 €</td><td class="n">101.550 €</td></tr>
+              <tr class="tot"><td>Retorno · 11 meses</td><td class="n">9,86 %</td><td class="n">9,21 %</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note" style="margin-top:var(--s3)">Con un 56 % más de capital inmovilizado, la
+          misma operación rinde un 9,86 % en lugar del 12,58 %. Y si mantiene el capital en
+          1,10 M€, el activo al que puede acceder baja de 1.225.000 € a 781.000 € — sale de la
+          franja de producto que Rebis compra off-market. El apalancamiento no solo mejora el
+          retorno: determina en qué mercado juega. Ambas columnas están calculadas sobre la misma
+          base que el 12,58 %: después de Impuesto sobre Sociedades y retención por dividendo.</p>
+      </div>
+
+      <div class="card a">
+        <h4>Precedente real: San Andrés 1</h4>
+        <p class="small" style="margin-top:var(--s3)">La única operación cerrada y liquidada de la
+          que tenemos el detalle completo se financió exactamente con esta lógica: un préstamo del
+          inversor a la sociedad.</p>
+        <dl class="kv" style="margin-top:var(--s4)">
+          <dt>Capital prestado</dt><dd>606.178 €</dd>
+          <dt>Intereses</dt><dd>130.636 € — un 21,6 % sobre el capital prestado</dd>
+          <dt>Retención</dt><dd>4.142 €, un 3,2 % efectivo sobre los intereses</dd>
+          <dt>Devolución</dt><dd>606.178 €, íntegra</dd>
+          <dt>Margen del proyecto</dt><dd>331.970 €, con comisión de gestión del 20 %</dd>
+        </dl>
+        <p class="note" style="margin-top:var(--s3)">Es el mejor punto de referencia disponible:
+          una operación real, cobrada. También muestra que el mecanismo de retribución se instrumentó
+          allí como "intereses" y no como participación en el balance final — una diferencia de
+          redacción contractual que conviene unificar antes de firmar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="riesgos">
+  <div class="stack-lg">
+    <div>
+      <div class="eyebrow"><span class="num">08</span> Riesgos</div>
+      <h2>Qué puede salir mal y quién lo absorbe</h2>
+      <p class="sub">El escenario conservador de la sección anterior no es un ejercicio teórico:
+        Brescia, una de nuestras operaciones liquidadas, cerró con un 4,07 % sobre la inversión.
+        Estos son los factores que determinan de qué lado del rango cae una operación.</p>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead>
+          <tr><th style="width:22%">Riesgo</th><th style="width:30%">Impacto</th>
+          <th style="width:30%">Mitigación</th><th style="width:18%">Quién lo asume</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Precio de venta</b></td>
+            <td>Es la variable de mayor impacto y la más incierta. Por debajo de 1.766.102 € la
+              operación pierde dinero.</td>
+            <td>Compra off-market con descuento; contraste con dos valoradoras homologadas; venta
+              solo en zonas de alta rotación; plan B de renta al 5,5 %–7 % bruto anual.</td>
+            <td>El inversor, en ambos modelos. La comisión de gestión de Rebis cae proporcionalmente.</td>
+          </tr>
+          <tr>
+            <td><b>Sobrecoste de obra</b></td>
+            <td>Junto al precio de venta, el mayor desvío observado en los archivos auditados. Un
+              +10 % de obra resta 26.411 € al beneficio.</td>
+            <td>Tres presupuestos cerrados de constructoras de confianza; partida de imprevistos del
+              5,68 % ya presupuestada; dirección de obra propia.</td>
+            <td>El inversor. Si participa un socio constructor que financia la obra, comparte el
+              riesgo a cambio de un porcentaje del beneficio.</td>
+          </tr>
+          <tr>
+            <td><b>Retraso</b></td>
+            <td>Cada mes adicional suma coste financiero y gastos corrientes, y diluye el retorno
+              anualizado. Dos meses de más bajan el escenario base varios puntos.</td>
+            <td>Calendario de obra contratado; comercialización iniciada antes del fin de obra;
+              producto "llave en mano", que es el que más rápido rota.</td>
+            <td>El inversor.</td>
+          </tr>
+          <tr>
+            <td><b>Financiación bancaria</b></td>
+            <td>Sin hipoteca el retorno base cae del 12,58 % al 9,86 %, y hace falta un 56 % más de
+              capital para la misma operación.</td>
+            <td>En el Modelo A, el crédito se apoya en el historial y el aval de Rebis. En el
+              Modelo B habría que acreditar el perfil del inversor ante Compliance y Riesgos.</td>
+            <td><span class="tag tb">Riesgo propio del Modelo B</span></td>
+          </tr>
+          <tr>
+            <td><b>Contraparte</b></td>
+            <td>En el Modelo A la sociedad y el inmueble están a nombre de Rebis. Su posición es
+              contractual.</td>
+            <td>Prenda notarial sobre las participaciones inscrita en el Registro Mercantil, u
+              opción de compra de la sociedad; acceso consultivo permanente a las cuentas.</td>
+            <td><span class="tag ta">Riesgo propio del Modelo A</span></td>
+          </tr>
+          <tr>
+            <td><b>Prelación en la garantía</b></td>
+            <td>La hipoteca cobra antes que usted sobre el inmueble, y el préstamo participativo es
+              subordinado frente a los acreedores comunes.</td>
+            <td>Limitar el LTV; fijar contractualmente un precio mínimo de venta que requiera su
+              aprobación.</td>
+            <td><span class="tag ta">Mayor en el Modelo A</span></td>
+          </tr>
+          <tr>
+            <td><b>Fiscal</b></td>
+            <td>El modelo usa un ITP del 2 % y una plusvalía municipal aproximada como 2 % del
+              precio de compra. Ambos podrían ser mayores en una operación real.</td>
+            <td>Validación previa por gestor fiscal español para cada operación concreta, antes de
+              firmar arras.</td>
+            <td>El inversor, vía menor beneficio.</td>
+          </tr>
+          <tr>
+            <td><b>Liquidez</b></td>
+            <td>El capital queda inmovilizado 11 meses sin ninguna salida ordenada intermedia.</td>
+            <td>Ninguna. Es una característica del negocio, no un defecto corregible: solo debe
+              comprometerse capital que no vaya a necesitarse en ese plazo.</td>
+            <td>El inversor, en ambos modelos.</td>
+          </tr>
+          <tr>
+            <td><b>Concentración</b></td>
+            <td>Un único activo, en una única ciudad y un único segmento. No hay diversificación
+              dentro de la operación.</td>
+            <td>Repartir el capital entre varias operaciones sucesivas o simultáneas en lugar de
+              concentrarlo en una.</td>
+            <td>El inversor.</td>
+          </tr>
+          <tr>
+            <td><b>Transferencia de fondos</b></td>
+            <td>Los bancos españoles pueden bloquear temporalmente importes entrantes mientras
+              validan la documentación, con demoras de días.</td>
+            <td>Transferir con al menos 15 días de antelación a cada firma; documentación de origen
+              lícito preparada de antemano.</td>
+            <td>Compartido. Un bloqueo puede hacer perder las arras.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="validar">
+  <div class="stack-lg">
+    <div>
+      <div class="eyebrow"><span class="num">09</span> Base de la información</div>
+      <h2>Qué es dato, qué es supuesto y qué falta</h2>
+      <p class="sub">Nada de lo anterior tiene valor si no queda claro de dónde sale cada número.
+        Esta separación es deliberada y le pedimos que la use al leer el resto del documento.</p>
+    </div>
+
+    <div class="grid3">
+      <div class="card" style="border-top:3px solid var(--good)">
+        <div class="tag real" style="margin-bottom:var(--s3)">Datos reales</div>
+        <ul class="clean">
+          <li>Liquidaciones cerradas de <b>San Andrés 1</b> y <b>Brescia</b>, con sus importes
+            efectivamente cobrados y pagados.</li>
+          <li>Cash-flows de <b>García Paredes 21</b> y <b>Ruiz Jiménez 3</b>, línea por línea:
+            precios, obra, impuestos, honorarios y comisiones.</li>
+          <li>Costes de estructura societaria: sociedad TMF Group, gastos legales y notariales,
+            mantenimiento anual.</li>
+          <li>El <b>calendario de adquisición</b>, de la detección del activo a la escritura.</li>
+          <li>Las <b>estructuras jurídicas</b> descritas en los documentos internos de
+            estructuración de la participación y formas de aporte.</li>
+        </ul>
+      </div>
+
+      <div class="card" style="border-top:3px solid var(--b)">
+        <div class="tag sup" style="margin-bottom:var(--s3)">Supuestos de la proyección</div>
+        <ul class="clean">
+          <li><b>LTV del 55 %</b> — tomado de Ruiz Jiménez 3.</li>
+          <li><b>ITP del 2 %</b> y <b>plusvalía municipal del 2 %</b> sobre el precio de compra —
+            aproximaciones usadas en los archivos originales, señaladas como bajas en su propia
+            auditoría.</li>
+          <li><b>Comisión de gestión del 20 %</b> e <b>IS del 25 %</b> — convención consistente en
+            los archivos de Rebis, no una regla fiscal general.</li>
+          <li><b>Retención por dividendo del 10 %</b> — cifra citada en los documentos internos.</li>
+          <li><b>Coste del vehículo societario de 15.950 €</b> — punto medio de los rangos
+            documentados, prorrateado a 11 meses.</li>
+          <li>El <b>flujo de caja mensual</b> es una reconstrucción: los archivos originales solo
+            contienen un resumen económico único, y la obra se reparte en cuotas iguales.</li>
+        </ul>
+      </div>
+
+      <div class="card" style="border-top:3px solid var(--bad)">
+        <div class="tag val" style="margin-bottom:var(--s3)">A validar con profesionales</div>
+        <ul class="clean">
+          <li><b>Gestor fiscal español:</b> ITP-AJD real según la forma de adquisición y cálculo
+            real de la plusvalía municipal según valor catastral.</li>
+          <li><b>Abogado mercantil español:</b> deducibilidad del interés participativo en el
+            Impuesto sobre Sociedades y rango de la prenda frente a la hipoteca.</li>
+          <li><b>Asesor fiscal internacional:</b> retención española sobre intereses a un no
+            residente y convenio España–Argentina.</li>
+          <li><b>Contador argentino:</b> tratamiento como renta de fuente extranjera, cómputo del
+            crédito fiscal y obligaciones informativas.</li>
+        </ul>
+        <p class="note" style="margin-top:var(--s4)">Ninguna cifra de este documento sustituye ese
+          asesoramiento. Lo que aportamos es la economía del negocio y la mecánica de las
+          estructuras; la validación jurídica y fiscal debe hacerse operación por operación.</p>
+      </div>
+    </div>
+
+    <div>
+      <h3 style="margin-bottom:var(--s4)">Qué falta definir antes de firmar</h3>
+      <div class="grid2">
+        <div class="card">
+          <h4>Términos económicos</h4>
+          <ul class="clean" style="margin-top:var(--s3)">
+            <li>¿Hay un <b>interés fijo mínimo</b> para el inversor, o toda la retribución es
+              variable? Los contratos actuales solo prevén la parte variable.</li>
+            <li>¿Cuál es el <b>porcentaje exacto</b> de participación en el beneficio y de comisión
+              de gestión para esta operación? Los documentos internos describen cuatro esquemas
+              alternativos: fee fijo al final, mixto, participación proporcional, o un retorno
+              preferente para el inversor con el excedente para Rebis.</li>
+            <li>¿<b>Co-invierte Rebis</b> capital propio en la operación y en qué proporción?</li>
+            <li>Si participa un <b>socio constructor</b>, ¿con qué método se calcula su reparto? Los
+              dos archivos reales usaron métodos distintos e incompatibles entre sí.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Términos contractuales</h4>
+          <ul class="clean" style="margin-top:var(--s3)">
+            <li>El <b>umbral de desvío presupuestario</b> que obliga a consultarle: los borradores
+              actuales lo dejan en blanco.</li>
+            <li>El <b>precio mínimo de venta</b> por debajo del cual se requiere su aprobación:
+              también en blanco.</li>
+            <li>El <b>plazo máximo</b> del préstamo y qué ocurre si el inmueble no se vende dentro
+              de él: prórroga, interés de demora o ejecución de la garantía.</li>
+            <li>Qué <b>garantía</b> se elige — prenda sobre participaciones u opción de compra — y
+              su rango frente a la hipoteca bancaria.</li>
+            <li>Si los <b>gastos de venta</b> se descuentan del precio en la escritura o requieren
+              capital disponible antes del cierre. Cambia el desembolso máximo en unos 105.000 €.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pasos">
+  <div class="stack-lg">
+    <div>
+      <div class="eyebrow"><span class="num">10</span> Próximos pasos</div>
+      <h2>Cómo avanzamos</h2>
+    </div>
+    <div class="col">
+      <ol class="steps">
+        <li><b>Elegir la estructura.</b> Con lo anterior sobre la mesa, definir si avanzamos por
+          préstamo participativo o por sociedad propia. Es la decisión que condiciona todo lo demás.</li>
+        <li><b>Cerrar los términos económicos.</b> Ticket, porcentaje de participación, comisión de
+          gestión, existencia o no de retorno preferente, y co-inversión de Rebis.</li>
+        <li><b>Validación profesional cruzada.</b> Gestor fiscal y abogado mercantil españoles por
+          nuestro lado; su contador y abogado por el suyo. Sobre el borrador concreto, no sobre este
+          documento.</li>
+        <li><b>Carta de intención.</b> Recoge la estructura elegida, el ticket, el rango de retorno
+          objetivo y los umbrales de aprobación. Sin compromiso de fondos.</li>
+        <li><b>Presentación de activos filtrados.</b> Le presentamos operaciones concretas con su
+          cash-flow estimado y su balance inicial, para que apruebe el proyecto antes de que se
+          mueva un euro.</li>
+        <li><b>Firma y transferencia.</b> Con los fondos disponibles al menos 15 días antes de la
+          firma de arras.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap col stack-sm">
+    <p><b style="color:var(--ink)">Rebis · Desarrollos Inmobiliarios · Madrid</b></p>
+    <p>Documento confidencial preparado para uso exclusivo del destinatario. Las proyecciones
+      económicas provienen del Modelo de Flipping Rebis v1 y de los cash-flows de operaciones
+      propias; los resultados pasados no garantizan resultados futuros y toda operación
+      inmobiliaria puede arrojar pérdidas. Este documento no constituye asesoramiento legal, fiscal
+      ni de inversión, ni una oferta vinculante.</p>
+  </div>
+</footer>
+
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  var tip=document.getElementById('tip');
+  function fmt(n){return n.toLocaleString('es-ES',{maximumFractionDigits:0})+' €';}
+  function show(host,el,html){
+    var hb=host.getBoundingClientRect(), b=el.getBoundingClientRect();
+    tip.innerHTML=html;
+    tip.style.left=(b.left-hb.left+b.width/2)+'px';
+    tip.style.top=(b.top-hb.top+ (el.dataset.v && el.dataset.mod ? 40 : b.height*0.35))+'px';
+    host.appendChild(tip); tip.style.opacity='1';
+  }
+  function hide(){tip.style.opacity='0';}
+
+  document.querySelectorAll('#cashchart [data-hit]').forEach(function(r){
+    var host=r.closest('.chart-host')||r.closest('figure');
+    r.addEventListener('mouseenter',function(){
+      var v=+r.dataset.v, m=r.dataset.m;
+      show(host,r,'<b>Mes '+m+'</b><br>Saldo acumulado: '+fmt(v));
+    });
+    r.addEventListener('mouseleave',hide);
+  });
+
+  document.querySelectorAll('#escchart [data-hit]').forEach(function(r){
+    var host=r.closest('.chart-host')||r.closest('figure');
+    r.addEventListener('mouseenter',function(){
+      show(host,r,'<b>'+r.dataset.s+' · '+r.dataset.mod+'</b><br>'+
+        String(r.dataset.v).replace('.',',')+' % en '+r.dataset.m+' meses');
+    });
+    r.addEventListener('mouseleave',hide);
+  });
+
+  var links=[].slice.call(document.querySelectorAll('.nav a'));
+  var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'));});
+  function spy(){
+    var y=window.scrollY+140, cur=0;
+    secs.forEach(function(s,i){ if(s && s.offsetTop<=y) cur=i; });
+    links.forEach(function(a,i){ a.classList.toggle('on', i===cur); });
+  }
+  window.addEventListener('scroll',spy,{passive:true}); spy();
+})();
+</script>
