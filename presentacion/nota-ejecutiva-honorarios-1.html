@@ -41,17 +41,17 @@
 
   /* ---------- masthead ---------- */
   .masthead{display:flex;justify-content:space-between;align-items:flex-end;
-    border-bottom:0.75pt solid var(--ink);padding-bottom:5pt;margin-bottom:9pt}
+    border-bottom:0.75pt solid var(--ink);padding-bottom:6pt;margin-bottom:9pt}
   .eyebrow{font-size:7.4pt;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:500}
   .wordmark{height:19pt;width:auto;display:block}
 
   h1{margin:0 0 3pt;font-size:23pt;line-height:1.1;font-weight:700;letter-spacing:-.005em}
   h1 span{font-weight:200}
   .doc-meta{display:flex;gap:16pt;flex-wrap:wrap;font-size:7.8pt;color:var(--muted);
-    margin:6pt 0 9pt;border-top:0.5pt solid var(--line);padding-top:5pt}
+    margin:7pt 0 12pt;border-top:0.5pt solid var(--line);padding-top:6pt}
   .doc-meta b{color:var(--ink);font-weight:500}
 
-  .lede{font-size:10pt;line-height:1.42;color:var(--ink);font-weight:300;max-width:100%;margin-bottom:8pt}
+  .lede{font-size:10.5pt;line-height:1.48;color:var(--ink);font-weight:300;max-width:100%;margin-bottom:12pt}
   .lede b{font-weight:600}
 
   h2{font-size:11.5pt;font-weight:600;text-transform:uppercase;letter-spacing:.05em;
@@ -68,11 +68,11 @@
   .snap .d{font-size:6.7pt;color:var(--muted);margin-top:2pt;line-height:1.25}
 
   /* ---------- comparison table ---------- */
-  table{width:100%;border-collapse:collapse;font-size:7.8pt;line-height:1.32}
+  table{width:100%;border-collapse:collapse;font-size:8.6pt;line-height:1.38}
   .cmp th{text-align:left;font-size:7.2pt;letter-spacing:.07em;text-transform:uppercase;
     font-weight:600;color:var(--muted);padding:6pt 10pt 6pt 0;border-bottom:0.75pt solid var(--ink)}
   .cmp th.a,.cmp th.b{color:var(--ink);font-size:8.4pt;text-transform:none;letter-spacing:0}
-  .cmp td{padding:2.8pt 9pt 2.8pt 0;border-bottom:0.5pt solid var(--line);vertical-align:top}
+  .cmp td{padding:6pt 10pt 6pt 0;border-bottom:0.5pt solid var(--line);vertical-align:top}
   .cmp td.crit{font-weight:600;width:15%;white-space:nowrap;padding-right:6pt}
   .cmp td.a,.cmp td.b{width:42.5%}
   .cmp tr:last-child td{border-bottom:0.75pt solid var(--ink)}
@@ -80,8 +80,8 @@
   .cmp b{font-weight:600}
   .cmp .num{font-weight:700;color:var(--accent)}
 
-  .oneliners{display:grid;grid-template-columns:1fr 1fr;gap:16pt;margin-top:6pt;font-size:8pt;line-height:1.4}
-  .oneliners .box{border-top:1.5pt solid var(--ink);padding-top:5pt}
+  .oneliners{display:grid;grid-template-columns:1fr 1fr;gap:16pt;margin-top:9pt;font-size:8.6pt;line-height:1.45}
+  .oneliners .box{border-top:1.5pt solid var(--ink);padding-top:6pt}
   .oneliners .box b{display:block;font-size:7.2pt;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);
     font-weight:600;margin-bottom:4pt}
 
@@ -165,13 +165,6 @@
     Esta nota compara ambas sobre <b>una misma operación de referencia</b>, con capital y plazo idénticos,
     para decidir en igualdad de condiciones.</p>
 
-  <div class="snap">
-    <div><div class="k">Capital de referencia</div><div class="v">1,08 M€</div><div class="d">Igual en ambos modelos</div></div>
-    <div><div class="k">Coste total del proyecto</div><div class="v">1,78 M€</div><div class="d">162 m² · Chamberí</div></div>
-    <div><div class="k">Beneficio bruto</div><div class="v">272.379 €</div><div class="d">13,3 % s/ venta</div></div>
-    <div><div class="k">Plazo</div><div class="v">11 m</div><div class="d">8 obra + 3 comercialización</div></div>
-    <div><div class="k">Comisión de gestión</div><div class="v">20–30 %</div><div class="d">Según tramo de rentabilidad</div></div>
-  </div>
 
   <h2>Comparación estructural</h2>
   <table class="cmp">
@@ -209,16 +202,17 @@
     </tbody>
   </table>
 
-  <div class="oneliners">
-    <div class="box"><b>Modelo A, en una frase</b>Mayor retorno neto, menor carga fiscal y mayor simplicidad operativa, a cambio de una posición de acreedor y no de propietario.</div>
-    <div class="box"><b>Modelo B, en una frase</b>Propiedad y control directos, a cambio de menor retorno neto y de una carga fiscal y administrativa mayor.</div>
-  </div>
 
   <div class="pagefoot"><span>Rebis · Transformar con criterio</span><span>1 / 2</span></div>
 </section>
 
 <!-- ============ PÁGINA 2 ============ -->
 <section class="page">
+  <div class="oneliners">
+    <div class="box"><b>Modelo A, en una frase</b>Mayor retorno neto, menor carga fiscal y mayor simplicidad operativa, a cambio de una posición de acreedor y no de propietario.</div>
+    <div class="box"><b>Modelo B, en una frase</b>Propiedad y control directos, a cambio de menor retorno neto y de una carga fiscal y administrativa mayor.</div>
+  </div>
+
   <div class="tramos-standalone">
     <div class="tramos-box">
       <div class="cap">Comisión de gestión Rebis, por rentabilidad del proyecto sobre el capital (antes de comisión)</div>
