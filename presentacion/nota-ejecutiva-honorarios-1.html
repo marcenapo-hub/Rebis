@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Rebis — Dos estructuras de inversión</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800&display=swap">
+<style>
+  @page{ size:210mm 297mm; margin:0; }
+  /* Paleta Rebis — Manual de Identidad: tonos arquitectónicos + un acento secundario controlado */
+  :root{
+    --ink:#000000;
+    --paper:#FFFFFF;
+    --muted:#515150;      /* Hormigón */
+    --line:#D7D1CA;       /* Cerámica */
+    --tint:#F0F1EF;       /* Arcilla */
+    --stone:#808282;      /* Concreto */
+    --accent:#B59169;     /* Roble Natural — acento secundario, uso controlado */
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Poppins",Arial,Helvetica,sans-serif;
+    color:var(--ink);
+    background:#EDEDEC;
+    font-weight:300;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{
+    width:210mm;
+    height:297mm;
+    padding:17mm 18mm 14mm;
+    background:var(--paper);
+    position:relative;
+    page-break-after:always;
+    display:flex;
+    flex-direction:column;
+  }
+  .page:last-child{page-break-after:auto}
+
+  /* ---------- masthead ---------- */
+  .masthead{display:flex;justify-content:space-between;align-items:flex-end;
+    border-bottom:0.75pt solid var(--ink);padding-bottom:7pt;margin-bottom:16pt}
+  .eyebrow{font-size:7.4pt;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:500}
+  .wordmark{font-size:15pt;font-weight:700;letter-spacing:.02em}
+  .wordmark b{font-weight:200}
+
+  h1{margin:0 0 4pt;font-size:25pt;line-height:1.12;font-weight:700;letter-spacing:-.005em}
+  h1 span{font-weight:200}
+  .doc-meta{display:flex;gap:16pt;flex-wrap:wrap;font-size:7.8pt;color:var(--muted);
+    margin:9pt 0 15pt;border-top:0.5pt solid var(--line);padding-top:7pt}
+  .doc-meta b{color:var(--ink);font-weight:500}
+
+  .lede{font-size:11pt;line-height:1.55;color:var(--ink);font-weight:300;max-width:100%;margin-bottom:14pt}
+  .lede b{font-weight:600}
+
+  h2{font-size:11.5pt;font-weight:600;text-transform:uppercase;letter-spacing:.05em;
+    margin:0 0 9pt;padding-bottom:5pt;border-bottom:0.5pt solid var(--ink);display:flex;align-items:baseline;gap:7pt}
+  h2 .n{color:var(--accent);font-weight:700;font-size:11.5pt}
+
+  /* ---------- snapshot strip ---------- */
+  .snap{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border:0.5pt solid var(--line);
+    border-radius:2pt;overflow:hidden;margin-bottom:15pt}
+  .snap div{padding:11pt 10pt;border-left:0.5pt solid var(--line)}
+  .snap div:first-child{border-left:none}
+  .snap .k{font-size:7pt;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5pt;font-weight:500}
+  .snap .v{font-size:15pt;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.05}
+  .snap .d{font-size:7.4pt;color:var(--muted);margin-top:4pt;line-height:1.35}
+
+  /* ---------- comparison table ---------- */
+  table{width:100%;border-collapse:collapse;font-size:8.8pt;line-height:1.42}
+  .cmp th{text-align:left;font-size:7.2pt;letter-spacing:.07em;text-transform:uppercase;
+    font-weight:600;color:var(--muted);padding:6pt 10pt 6pt 0;border-bottom:0.75pt solid var(--ink)}
+  .cmp th.a,.cmp th.b{color:var(--ink);font-size:8.4pt;text-transform:none;letter-spacing:0}
+  .cmp td{padding:7.5pt 10pt 7.5pt 0;border-bottom:0.5pt solid var(--line);vertical-align:top}
+  .cmp td.crit{font-weight:600;width:15%;white-space:nowrap;padding-right:6pt}
+  .cmp td.a,.cmp td.b{width:42.5%}
+  .cmp tr:last-child td{border-bottom:0.75pt solid var(--ink)}
+  .cmp tr.final td{font-weight:500}
+  .cmp b{font-weight:600}
+  .cmp .num{font-weight:700;color:var(--accent)}
+
+  .oneliners{display:grid;grid-template-columns:1fr 1fr;gap:16pt;margin-top:16pt;font-size:8.6pt;line-height:1.5}
+  .oneliners .box{border-top:1.5pt solid var(--ink);padding-top:8pt}
+  .oneliners .box b{display:block;font-size:7.2pt;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);
+    font-weight:600;margin-bottom:4pt}
+
+  .spacer{flex:1}
+  .pagefoot{display:flex;justify-content:space-between;font-size:7pt;color:var(--muted);
+    border-top:0.5pt solid var(--line);padding-top:7pt;margin-top:auto}
+
+  /* ---------- page 2 waterfall ---------- */
+  .waterfall{width:100%;border-collapse:collapse;font-size:8.8pt;margin-bottom:3pt}
+  .waterfall td{padding:4.4pt 0;border-bottom:0.5pt solid var(--line)}
+  .waterfall td.amt{text-align:right;font-variant-numeric:tabular-nums;font-weight:500;white-space:nowrap}
+  .waterfall tr.eq td{border-top:0.75pt solid var(--ink);border-bottom:0.75pt solid var(--ink);font-weight:600}
+  .waterfall tr.eq td.amt{color:var(--ink)}
+
+  .fee-wrap{display:grid;grid-template-columns:1.32fr 1fr;gap:16pt;align-items:start;margin-bottom:0pt}
+  .waterfall tr.sub td{border:0;padding:0 0 3.6pt;font-size:7.1pt;color:var(--muted);line-height:1.3}
+  .tramos-box{border:0.5pt solid var(--line);border-radius:2pt;padding:6pt 9pt}
+  .tramos-box .cap{font-size:6.6pt;letter-spacing:.04em;color:var(--muted);line-height:1.35;margin-bottom:4pt}
+  .tramos{width:100%;border-collapse:collapse;font-size:7.8pt}
+  .tramos th{text-align:left;font-size:6.4pt;letter-spacing:.06em;text-transform:uppercase;font-weight:600;
+    color:var(--muted);padding:0 0 3.5pt;border-bottom:0.75pt solid var(--ink)}
+  .tramos th.n,.tramos td.n{text-align:right;font-variant-numeric:tabular-nums}
+  .tramos td{padding:3.3pt 0;border-bottom:0.5pt solid var(--line)}
+  .tramos tr:last-child td{border-bottom:0}
+  .tramos tr.hit td{font-weight:600}
+
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:18pt;margin:8pt 0 11pt}
+  .modelcard{border:0.5pt solid var(--line);border-radius:2pt;padding:8pt 11pt}
+  .modelcard .tag{font-size:7.2pt;letter-spacing:.09em;text-transform:uppercase;font-weight:600;
+    color:var(--muted);margin-bottom:6pt;padding-bottom:5pt;border-bottom:0.5pt solid var(--line)}
+  .modelcard table{font-size:8.8pt}
+  .modelcard td{padding:3pt 0;border:0}
+  .modelcard td.amt{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .modelcard tr.net td{border-top:0.75pt solid var(--ink);padding-top:5pt;font-weight:600}
+  .modelcard .result{margin-top:7pt;padding-top:7pt;border-top:1.5pt solid var(--ink)}
+  .modelcard .result .big{font-size:18pt;font-weight:700;color:var(--accent);line-height:1;font-variant-numeric:tabular-nums}
+  .modelcard .result .sub{font-size:7.6pt;color:var(--muted);margin-top:3pt}
+
+  .scen{width:100%;border-collapse:collapse;font-size:8.8pt;margin-bottom:8pt}
+  .scen th{text-align:left;font-size:7.2pt;letter-spacing:.06em;text-transform:uppercase;font-weight:600;
+    color:var(--muted);padding:4.5pt 8pt;border-bottom:0.75pt solid var(--ink)}
+  .scen th.n,.scen td.n{text-align:right;font-variant-numeric:tabular-nums}
+  .scen td{padding:5pt 8pt;border-bottom:0.5pt solid var(--line)}
+  .scen tr.base td{background:var(--tint);font-weight:500}
+  .scen-note{font-size:7.8pt;color:var(--muted);line-height:1.45;margin:-2pt 0 11pt}
+
+  .two-col{columns:2;column-gap:20pt}
+  .risklist{margin:0;padding:0;list-style:none;font-size:8.2pt;line-height:1.36;break-inside:avoid-column}
+  .risklist li{padding:3.4pt 0;border-bottom:0.5pt solid var(--line);break-inside:avoid}
+  .risklist li:last-child{border-bottom:0}
+  .risklist b{font-weight:600}
+
+  .closing{margin-top:auto;padding-top:8pt;border-top:1.5pt solid var(--ink)}
+  .closing p{font-size:9.4pt;line-height:1.45;margin:0 0 5pt;max-width:100%}
+  .closing .signoff{font-size:7.4pt;color:var(--muted);margin-top:2pt}
+
+  .disclaimer{font-size:6.2pt;color:var(--muted);line-height:1.4;margin-top:6pt;padding-top:5pt;
+    border-top:0.5pt solid var(--line)}
+</style>
+</head>
+<body>
+
+<!-- ============ PÁGINA 1 ============ -->
+<section class="page">
+  <div class="masthead">
+    <div class="eyebrow">Rebis · Desarrollos Inmobiliarios · Madrid · Honorarios, versión 1</div>
+    <div class="wordmark">RE<b>BIS</b></div>
+  </div>
+
+  <h1>Dos estructuras de inversión<br><span>Préstamo participativo — sociedad propia del inversor</span></h1>
+  <div class="doc-meta">
+    <span><b>Confidencial</b> · nota para segunda reunión</span>
+    <span>Capital de referencia: <b>1.102.632 €</b></span>
+    <span>Base: <b>Modelo de Flipping Rebis v1</b></span>
+    <span>Agosto 2026</span>
+  </div>
+
+  <p class="lede">Dos vías para financiar la misma operación de compra, reforma y venta en Madrid prime.
+    No cambia el negocio: cambia la fiscalidad, la garantía y el grado de control que usted retiene.
+    Esta nota compara ambas sobre <b>una misma operación de referencia</b>, con capital y plazo idénticos,
+    para decidir en igualdad de condiciones.</p>
+
+  <div class="snap">
+    <div><div class="k">Capital de referencia</div><div class="v">1,10 M€</div><div class="d">Igual en ambos modelos</div></div>
+    <div><div class="k">Coste total del proyecto</div><div class="v">1,78 M€</div><div class="d">162 m² · Chamberí</div></div>
+    <div><div class="k">Beneficio bruto</div><div class="v">272.918 €</div><div class="d">13,3 % s/ venta</div></div>
+    <div><div class="k">Plazo</div><div class="v">11 m</div><div class="d">8 obra + 3 comercialización</div></div>
+    <div><div class="k">Comisión de gestión</div><div class="v">20–30 %</div><div class="d">Según tramo de rentabilidad del proyecto</div></div>
+  </div>
+
+  <h2>Comparación estructural</h2>
+  <table class="cmp">
+    <thead>
+      <tr><th style="width:15%">Criterio</th><th class="a">Modelo A · Préstamo participativo</th><th class="b">Modelo B · Sociedad propia</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="crit">Naturaleza</td>
+        <td class="a">Acreedor. Presta a la sociedad titular del inmueble, administrada por Rebis.</td>
+        <td class="b">Socio único de una SL española, titular directa del inmueble.</td></tr>
+      <tr><td class="crit">Financiación bancaria</td>
+        <td class="a">Hipoteca asegurada sobre historial y aval de Rebis: 55 % LTV.</td>
+        <td class="b">Sujeta al scoring del nuevo titular ante Compliance y Riesgos; puede denegarse o demorar.</td></tr>
+      <tr><td class="crit">Remuneración</td>
+        <td class="a">Interés participativo sobre el beneficio neto del proyecto, pago único al cierre.</td>
+        <td class="b">Dividendo tras Impuesto sobre Sociedades, distribuible tras el cierre.</td></tr>
+      <tr><td class="crit">Fiscalidad</td>
+        <td class="a">Un nivel: interés deducible en la sociedad; sin retención por retiro de capital.</td>
+        <td class="b">Dos niveles: IS 25 % en España + retención al distribuir el dividendo.</td></tr>
+      <tr><td class="crit">Recuperación de capital</td>
+        <td class="a">Principal + interés, pago único al cierre de la venta (mes 11).</td>
+        <td class="b">Mismo calendario, vía devolución de préstamo ordinario a la sociedad + dividendo.</td></tr>
+      <tr><td class="crit">Garantía</td>
+        <td class="a">Prenda notarial sobre participaciones (Registro Mercantil) u opción de compra. Segundo rango tras la hipoteca; subordinada en concurso.</td>
+        <td class="b">Propiedad directa del activo. Sin garantía intermedia que ejecutar.</td></tr>
+      <tr><td class="crit">Control</td>
+        <td class="a">Contractual: aprueba el balance inicial, es consultado ante desvíos. No firma ni decide.</td>
+        <td class="b">Societario pleno: decide, revoca poderes, fija los límites de actuación de Rebis.</td></tr>
+      <tr><td class="crit">Complejidad</td>
+        <td class="a">Baja. Sin NIE ni comparecencias ante organismos españoles.</td>
+        <td class="b">Alta. NIE, poder apostillado, alta societaria, justificación de origen de fondos.</td></tr>
+      <tr class="final"><td class="crit">Retorno (base, 11 m)</td>
+        <td class="a"><span class="num">17,5 %</span> · 19,2 % anualizado</td>
+        <td class="b"><span class="num">11,8 %</span> · 12,9 % anualizado</td></tr>
+    </tbody>
+  </table>
+
+  <div class="oneliners">
+    <div class="box"><b>Modelo A, en una frase</b>Mayor retorno neto y mayor simplicidad, a cambio de una posición de acreedor con garantía de segundo rango.</div>
+    <div class="box"><b>Modelo B, en una frase</b>Propiedad y control directos, a cambio de menor retorno neto y de quedar sujeto a la aprobación bancaria del nuevo titular.</div>
+  </div>
+
+  <div class="pagefoot"><span>Rebis · Transformar con criterio</span><span>1 / 2</span></div>
+</section>
+
+<!-- ============ PÁGINA 2 ============ -->
+<section class="page">
+  <h2><span class="n">01</span> Economía de la operación — mismo capital, ambos modelos</h2>
+  <div class="fee-wrap">
+    <table class="waterfall">
+      <tr><td>Beneficio bruto de la operación</td><td class="amt">272.918 €</td></tr>
+      <tr><td>– Costes del vehículo societario</td><td class="amt">−15.950 €</td></tr>
+      <tr><td>– Comisión de gestión Rebis</td><td class="amt">−64.242 €</td></tr>
+      <tr class="sub"><td colspan="2">Tasa única del tramo alcanzado (25,0 %) sobre la totalidad del beneficio del proyecto.</td></tr>
+      <tr class="eq"><td>= Base de reparto para el inversor</td><td class="amt">192.726 €</td></tr>
+    </table>
+    <div class="tramos-box">
+      <div class="cap">Comisión de gestión Rebis, por rentabilidad del proyecto sobre el capital (antes de comisión)</div>
+      <table class="tramos">
+        <thead><tr><th>Tramo</th><th class="n">Tasa</th></tr></thead>
+        <tbody>
+          <tr><td>0 – 15 %</td><td class="n">20 %</td></tr>
+          <tr><td>15 – 20 %</td><td class="n">22,5 %</td></tr>
+          <tr class="hit"><td>20 – 25 %</td><td class="n">25 %</td></tr>
+          <tr><td>> 25 %</td><td class="n">30 %</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="split">
+    <div class="modelcard">
+      <div class="tag">Modelo A · Préstamo participativo</div>
+      <table>
+        <tr><td>Impuesto sobre Sociedades</td><td class="amt">0 €</td></tr>
+        <tr><td style="color:var(--muted);font-size:6.8pt">Interés deducible en la sociedad</td><td></td></tr>
+        <tr class="net"><td>Neto al inversor</td><td class="amt">192.726 €</td></tr>
+      </table>
+      <div class="result"><div class="big">17,5 %</div><div class="sub">en 11 meses · 19,2 % anualizado</div></div>
+    </div>
+    <div class="modelcard">
+      <div class="tag">Modelo B · Sociedad propia</div>
+      <table>
+        <tr><td>– Impuesto sobre Sociedades, 25 %</td><td class="amt">−48.181 €</td></tr>
+        <tr><td>– Retención por dividendo, 10 %</td><td class="amt">−14.454 €</td></tr>
+        <tr class="net"><td>Neto al inversor</td><td class="amt">130.090 €</td></tr>
+      </table>
+      <div class="result"><div class="big">11,8 %</div><div class="sub">en 11 meses · 12,9 % anualizado</div></div>
+    </div>
+  </div>
+
+  <h2><span class="n">02</span> Sensibilidad</h2>
+  <table class="scen">
+    <thead><tr><th>Escenario</th><th>Plazo</th><th class="n">Modelo A</th><th class="n">Modelo B</th></tr></thead>
+    <tbody>
+      <tr><td>Conservador</td><td>13 m</td><td class="n">1,7 %</td><td class="n">1,1 %</td></tr>
+      <tr class="base"><td>Base</td><td>11 m</td><td class="n">17,5 %</td><td class="n">11,8 %</td></tr>
+      <tr><td>Optimista</td><td>10 m</td><td class="n">28,4 %</td><td class="n">19,2 %</td></tr>
+    </tbody>
+  </table>
+  <p class="scen-note">Conservador: compra +3 %, obra +10 % sobre presupuesto, venta −8 %, +2 meses de plazo — desviaciones
+    ordinarias tomadas en conjunto. Sin financiación bancaria, el Modelo B rinde 8,9 % con el mismo capital, o 9,6 %
+    sobre la misma operación con un 56 % más de capital inmovilizado.</p>
+
+  <h2><span class="n">03</span> Riesgos materiales &amp; puntos a validar</h2>
+  <div class="two-col">
+    <ul class="risklist">
+      <li><b>Precio de venta.</b> Variable de mayor impacto; breakeven bruto en 1.766.102 € (−13,8 % vs. objetivo).</li>
+      <li><b>Sobrecoste de obra.</b> +10 % reduce el beneficio bruto en ≈26.000 €; imprevisto del 5,7 % ya incorporado.</li>
+      <li><b>Financiación bancaria (B).</b> Sin hipoteca: capital necesario +56 % o activo un 36 % menor.</li>
+      <li><b>Prelación (A).</b> La hipoteca cobra primero; el préstamo participativo es subordinado en concurso.</li>
+      <li><b>Liquidez.</b> Nula durante los 11 meses en ambos modelos; pago único al cierre.</li>
+    </ul>
+    <ul class="risklist">
+      <li><b>Deducibilidad del interés (A).</b> A confirmar con abogado mercantil español; determina la ventaja fiscal de A.</li>
+      <li><b>ITP y plusvalía municipal.</b> El 2 % usado es una aproximación; el real depende de la operación y el catastro.</li>
+      <li><b>Umbrales contractuales.</b> Desvío presupuestario y precio mínimo de venta, aún sin fijar por contrato.</li>
+      <li><b>Tratamiento en Argentina.</b> Cómputo del crédito fiscal, a confirmar con su asesor local.</li>
+    </ul>
+  </div>
+
+  <div class="closing">
+    <p>Ambas estructuras son ejecutables sobre la misma operación y el mismo calendario. Lo que definiría el
+      siguiente borrador de trabajo es la elección entre una y otra, y la fijación de los términos económicos
+      y umbrales de aprobación — a validar con sus asesores y los nuestros antes de comprometer capital.</p>
+    <div class="signoff">Rebis · Desarrollos Inmobiliarios</div>
+  </div>
+
+  <p class="disclaimer">Documento confidencial, preparado para uso exclusivo del destinatario. Cifras calculadas sobre el
+    Modelo de Flipping Rebis v1 y cash-flows de operaciones propias de Rebis; los resultados pasados no garantizan
+    resultados futuros. Este documento no constituye asesoramiento legal, fiscal ni de inversión, ni una oferta vinculante.</p>
+  <div class="pagefoot"><span>Rebis · Transformar con criterio</span><span>2 / 2</span></div>
+</section>
+
+</body>
+</html>

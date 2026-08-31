@@ -78,3 +78,67 @@ if __name__ == '__main__':
         m = (lo + hi) / 2
         lo, hi = (m, hi) if op(m, 2049300, 264107)['bruto'] > 0 else (lo, m)
     print(f"  precio de compra maximo: {(lo + hi) / 2:,.0f} EUR")
+
+
+# ---------------------------------------------------------------------------
+# Honorarios variables por tramo de rentabilidad (nota-ejecutiva-honorarios-*)
+#
+# La comision de gestion, en vez de un 20% fijo, depende del tramo de
+# rentabilidad que alcanza el proyecto (beneficio del proyecto / capital
+# propio, antes de comision). Dos formas de aplicar esos tramos:
+#
+#   Variante 1: se aplica UNA sola tasa -- la del tramo alcanzado -- sobre
+#               la TOTALIDAD del beneficio del proyecto.
+#   Variante 2: cada tasa se aplica solo a la PORCION de beneficio que cae
+#               dentro de su propio tramo (la tasa efectiva resultante es
+#               un promedio ponderado, siempre <= la tasa de la Variante 1).
+#
+# Los tramos y tasas son los mismos en ambas variantes; ver
+# nota-ejecutiva-honorarios-1.pdf / -2.pdf para su presentacion al inversor.
+TRAMOS = [(0.00, 0.15, 0.20), (0.15, 0.20, 0.225), (0.20, 0.25, 0.25), (0.25, float('inf'), 0.30)]
+
+
+def fee_variante1(gross_roi, proyecto):
+    """Tasa unica del tramo alcanzado, sobre la totalidad del beneficio."""
+    for lo, hi, rate in TRAMOS:
+        if gross_roi < hi or hi == float('inf'):
+            return rate * proyecto
+
+
+def fee_variante2(gross_roi, capital):
+    """Cada tasa aplica solo a la porcion de beneficio dentro de su tramo."""
+    fee = 0.0
+    for lo, hi, rate in TRAMOS:
+        amt = max(0.0, min(gross_roi, hi) - lo) * capital
+        fee += amt * rate
+    return fee
+
+
+def cascada_variable(o, variante, veh=VEHICULO):
+    """Igual que cascada(), pero con comision de gestion variable por tramo."""
+    proyecto = o['bruto'] - veh
+    capital = o['capital']
+    gross_roi = proyecto / capital
+    fee = fee_variante1(gross_roi, proyecto) if variante == 1 else fee_variante2(gross_roi, capital)
+    base = proyecto - fee
+    a_neto = base
+    b_tras_is = base * (1 - IS)
+    b_neto = b_tras_is * (1 - WHT_DIV)
+    return dict(bruto=o['bruto'], proyecto=proyecto, gross_roi=gross_roi, fee=fee, fee_pct=fee / proyecto,
+                base=base, a_neto=a_neto, a_roi=a_neto / capital, a_anual=anual(a_neto / capital, o['meses']),
+                b_is=base * IS, b_wht=b_tras_is * WHT_DIV, b_neto=b_neto,
+                b_roi=b_neto / capital, b_anual=anual(b_neto / capital, o['meses']))
+
+
+if __name__ == '__main__':
+    print("\n" + "=" * 78)
+    print("Honorarios variables por tramo -- comparacion Variante 1 vs Variante 2")
+    for variante in (1, 2):
+        print(f"\n--- Variante {variante} ---")
+        for nombre, s in ESCENARIOS.items():
+            o = op(1225000 * (1 + s['dP']), 2049300 * (1 + s['dV']), 264107 * (1 + s['dObra']),
+                   meses_obra=8 + s['dMeses'], coste_fin=37000 * (1 + s['dFin']))
+            c = cascada_variable(o, variante)
+            print(f"{nombre:<13} rentab.proyecto={c['gross_roi']:>7.2%} fee={c['fee']:>10,.0f}({c['fee_pct']:>6.2%}) "
+                  f"base={c['base']:>10,.0f}  A={c['a_roi']:>7.2%}/{c['a_anual']:>7.2%}  "
+                  f"B={c['b_roi']:>7.2%}/{c['b_anual']:>7.2%}")

@@ -8,7 +8,10 @@ del inversor**.
 
 | Archivo | Qué es |
 |---|---|
-| `modelos-inversion.html` | La presentación. Página autónoma; se abre en cualquier navegador. |
+| `modelos-inversion.html` | La presentación completa (web). Página autónoma; se abre en cualquier navegador. |
+| `nota-ejecutiva.html` / `.pdf` | Versión condensada a dos carillas A4 para un inversor calificado, con la comisión de gestión fija (20 %). Estilo del Manual de Identidad de Rebis. |
+| `nota-ejecutiva-honorarios-1.html` / `.pdf` | Misma nota, con la comisión de gestión variable por tramo de rentabilidad — Variante 1 (una sola tasa sobre la totalidad del beneficio, la del tramo alcanzado). |
+| `nota-ejecutiva-honorarios-2.html` / `.pdf` | Misma nota, con la comisión de gestión variable por tramo de rentabilidad — Variante 2 (cada tasa aplica solo a la porción de beneficio de su propio tramo). |
 | `calculo.py` | Motor de cálculo que produce todas las cifras económicas. `python3 calculo.py` |
 
 ## De dónde salen los números
@@ -31,10 +34,12 @@ Fuentes documentales usadas en la presentación:
 Definidos como constantes en `calculo.py` para poder ajustarlos si cambian los
 términos negociados:
 
-- `FEE = 0.20` — comisión de gestión de Rebis sobre el beneficio del proyecto
+- `FEE = 0.20` — comisión de gestión de Rebis sobre el beneficio del proyecto (nota-ejecutiva base)
 - `IS = 0.25` — Impuesto sobre Sociedades (solo Modelo B)
 - `WHT_DIV = 0.10` — retención por salida de capital vía dividendo (solo Modelo B)
 - `VEHICULO` — coste del vehículo societario prorrateado a 11 meses
+- `TRAMOS` — tramos de rentabilidad y tasa de comisión para las variantes 1 y 2 (0–15 % → 20 %,
+  15–20 % → 22,5 %, 20–25 % → 25 %, >25 % → 30 %), usados por `cascada_variable()`
 
 ## Pendiente de validación
 
