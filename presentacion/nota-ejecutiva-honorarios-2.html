@@ -82,7 +82,7 @@
 
   .oneliners{display:grid;grid-template-columns:1fr 1fr;gap:16pt;margin-top:9pt;font-size:8.6pt;line-height:1.45}
   .oneliners .box{border-top:1.5pt solid var(--ink);padding-top:6pt}
-  .oneliners .box b{display:block;font-size:7.2pt;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);
+  .oneliners .box > b:first-child{display:block;font-size:7.2pt;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);
     font-weight:600;margin-bottom:4pt}
 
   .spacer{flex:1}
@@ -98,7 +98,7 @@
 
   .fee-wrap{display:grid;grid-template-columns:1.32fr 1fr;gap:22pt;align-items:start;margin-bottom:6pt}
   .waterfall tr.sub td{border:0;padding:0 0 5.5pt;font-size:8.8pt;color:var(--muted);line-height:1.4}
-  .tramos-standalone{margin:0 0 20pt;max-width:55%}
+  .tramos-standalone{margin:0 0 20pt;max-width:100%}
   .tramos-box{border:0.5pt solid var(--line);border-radius:2pt;padding:9pt 14pt}
   .tramos-box .cap{font-size:8pt;letter-spacing:.03em;color:var(--muted);line-height:1.4;margin-bottom:8pt}
   .tramos{width:100%;border-collapse:collapse;font-size:9.6pt}
@@ -107,7 +107,7 @@
   .tramos th.n,.tramos td.n{text-align:right;font-variant-numeric:tabular-nums}
   .tramos td{padding:5.5pt 0;border-bottom:0.5pt solid var(--line)}
   .tramos tr:last-child td{border-bottom:0}
-  .tramos tr.hit td{font-weight:600}
+  .tramos tr.tot td{border-top:0.75pt solid var(--ink);font-weight:600;padding-top:6pt}
 
   .split{display:grid;grid-template-columns:1fr 1fr;gap:24pt;margin:18pt 0 22pt}
   .modelcard{border:0.5pt solid var(--line);border-radius:3pt;padding:14pt 18pt}
@@ -155,8 +155,7 @@
   <h1>Dos estructuras de inversión<br><span>Préstamo Participativo — Sociedad Propia del inversor</span></h1>
   <div class="doc-meta">
     <span><b>Confidencial</b> · nota para segunda reunión</span>
-    <span>Capital de referencia: <b>1.078.671 €</b></span>
-    <span>Base: <b>Modelo de Flipping Rebis v1</b></span>
+    <span>Ejemplo: <b>1.000.000 €</b> de capital · <b>250.000 €</b> de ganancia</span>
     <span>Agosto 2026</span>
   </div>
 
@@ -196,9 +195,9 @@
       <tr><td class="crit">Complejidad</td>
         <td class="a">Baja. Sin NIE ni comparecencias ante organismos españoles.</td>
         <td class="b">Media. Alta de NIE, poder apostillado, alta societaria, justificación de origen de fondos.</td></tr>
-      <tr class="final"><td class="crit">Retorno (base, 11 m)</td>
-        <td class="a"><span class="num">16,5 %</span> · 18,1 % anualizado</td>
-        <td class="b"><span class="num">14,3 %</span> · 15,7 % anualizado</td></tr>
+      <tr class="final"><td class="crit">Retorno del inversor</td>
+        <td class="a"><span class="num">172.700 €</span> · 17,3 % s/ capital</td>
+        <td class="b"><span class="num">150.131 €</span> · 15,0 % s/ capital</td></tr>
     </tbody>
   </table>
 
@@ -209,20 +208,23 @@
 <!-- ============ PÁGINA 2 ============ -->
 <section class="page">
   <div class="oneliners">
-    <div class="box"><b>Modelo A, en una frase</b>Mayor retorno neto, menor carga fiscal y mayor simplicidad operativa, a cambio de una posición de acreedor y no de propietario.</div>
+    <div class="box"><b>Modelo A, en una frase</b>Sobre la misma operación deja <b>22.569 €</b> más que la Sociedad Propia, con menor carga fiscal y sin trámites en España, a cambio de una posición de acreedor y no de propietario.</div>
     <div class="box"><b>Modelo B, en una frase</b>Propiedad y control directos, a cambio de menor retorno neto y de una carga fiscal y administrativa mayor.</div>
   </div>
 
   <div class="tramos-standalone">
     <div class="tramos-box">
-      <div class="cap">Comisión de gestión Rebis, por rentabilidad del proyecto sobre el capital (antes de comisión)</div>
+      <div class="cap">Comisión de gestión Rebis. Cada tasa se aplica solo a la porción de ganancia
+        comprendida en su propio tramo de rentabilidad sobre el capital. Ejemplo sobre 1.000.000 €
+        de capital y 250.000 € de ganancia — una rentabilidad del 25 %.</div>
       <table class="tramos">
-        <thead><tr><th>Tramo</th><th class="n">Tasa</th></tr></thead>
+        <thead><tr><th>Tramo de rentabilidad</th><th class="n">Ganancia en el tramo</th><th class="n">Tasa</th><th class="n">Comisión</th></tr></thead>
         <tbody>
-          <tr><td>0 – 15 %</td><td class="n">20 %</td></tr>
-          <tr><td>15 – 20 %</td><td class="n">22,5 %</td></tr>
-          <tr class="hit"><td>20 – 25 %</td><td class="n">25 %</td></tr>
-          <tr><td>> 25 %</td><td class="n">30 %</td></tr>
+          <tr><td>0 – 15 %</td><td class="n">150.000 €</td><td class="n">20 %</td><td class="n">30.000 €</td></tr>
+          <tr><td>15 – 20 %</td><td class="n">50.000 €</td><td class="n">22,5 %</td><td class="n">11.250 €</td></tr>
+          <tr><td>20 – 25 %</td><td class="n">50.000 €</td><td class="n">25 %</td><td class="n">12.500 €</td></tr>
+          <tr><td>Más de 25 %</td><td class="n">—</td><td class="n">30 %</td><td class="n">—</td></tr>
+          <tr class="tot"><td>Total</td><td class="n">250.000 €</td><td class="n">21,5 % efectivo</td><td class="n">53.750 €</td></tr>
         </tbody>
       </table>
     </div>
