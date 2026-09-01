@@ -12,6 +12,7 @@ del inversor**.
 | `nota-ejecutiva.html` / `.pdf` | Versión condensada a dos carillas A4 para un inversor calificado, con la comisión de gestión fija (20 %). Estilo del Manual de Identidad de Rebis. |
 | `nota-ejecutiva-honorarios-1.html` / `.pdf` | Misma nota, con la comisión de gestión variable por tramo de rentabilidad — Variante 1 (una sola tasa sobre la totalidad del beneficio, la del tramo alcanzado). |
 | `nota-ejecutiva-honorarios-2.html` / `.pdf` | Misma nota, con la comisión de gestión variable por tramo de rentabilidad — Variante 2 (cada tasa aplica solo a la porción de beneficio de su propio tramo). **Versión vigente**, sobre un ejemplo redondo de 1.000.000 € de capital / 250.000 € de ganancia / 12 meses. |
+| `nota-ejecutiva-honorarios-2-sin-cuadro.html` / `.pdf` | La misma versión vigente, sin la tabla de reconciliación «De la ganancia al bolsillo del inversor». La cadena de cálculo pasa a la nota al pie de la página 2. |
 | `calculo.py` | Motor de cálculo que produce todas las cifras económicas. `python3 calculo.py` |
 
 ## De dónde salen los números
