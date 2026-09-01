@@ -11,10 +11,17 @@ del inversor**.
 | `modelos-inversion.html` | La presentación completa (web). Página autónoma; se abre en cualquier navegador. |
 | `nota-ejecutiva.html` / `.pdf` | Versión condensada a dos carillas A4 para un inversor calificado, con la comisión de gestión fija (20 %). Estilo del Manual de Identidad de Rebis. |
 | `nota-ejecutiva-honorarios-1.html` / `.pdf` | Misma nota, con la comisión de gestión variable por tramo de rentabilidad — Variante 1 (una sola tasa sobre la totalidad del beneficio, la del tramo alcanzado). |
-| `nota-ejecutiva-honorarios-2.html` / `.pdf` | Misma nota, con la comisión de gestión variable por tramo de rentabilidad — Variante 2 (cada tasa aplica solo a la porción de beneficio de su propio tramo). |
+| `nota-ejecutiva-honorarios-2.html` / `.pdf` | Misma nota, con la comisión de gestión variable por tramo de rentabilidad — Variante 2 (cada tasa aplica solo a la porción de beneficio de su propio tramo). **Versión vigente**, sobre un ejemplo redondo de 1.000.000 € de capital / 250.000 € de ganancia / 12 meses. |
 | `calculo.py` | Motor de cálculo que produce todas las cifras económicas. `python3 calculo.py` |
 
 ## De dónde salen los números
+
+`nota-ejecutiva-honorarios-2` (la versión vigente) no proyecta una operación
+concreta: usa un ejemplo redondo — 1.000.000 € de capital, 250.000 € de
+ganancia del proyecto (25 % sobre capital) y 12 meses — para que las dos
+estructuras se comparen en igualdad de condiciones. La cascada completa está
+reconciliada dentro del propio documento. Las otras dos notas siguen sobre las
+cifras derivadas del modelo y aún no se actualizaron.
 
 `calculo.py` reimplementa las hojas `Inputs` y `Cálculos y Resultados` del
 **Modelo de Flipping Rebis v1** (Google Drive) y reproduce exactamente su caso

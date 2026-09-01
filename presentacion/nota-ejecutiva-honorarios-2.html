@@ -72,7 +72,7 @@
   .cmp th{text-align:left;font-size:7.2pt;letter-spacing:.07em;text-transform:uppercase;
     font-weight:600;color:var(--muted);padding:6pt 10pt 6pt 0;border-bottom:0.75pt solid var(--ink)}
   .cmp th.a,.cmp th.b{color:var(--ink);font-size:8.4pt;text-transform:none;letter-spacing:0}
-  .cmp td{padding:6pt 10pt 6pt 0;border-bottom:0.5pt solid var(--line);vertical-align:top}
+  .cmp td{padding:5.2pt 10pt 5.2pt 0;border-bottom:0.5pt solid var(--line);vertical-align:top}
   .cmp td.crit{font-weight:600;width:15%;white-space:nowrap;padding-right:6pt}
   .cmp td.a,.cmp td.b{width:42.5%}
   .cmp tr:last-child td{border-bottom:0.75pt solid var(--ink)}
@@ -98,7 +98,16 @@
 
   .fee-wrap{display:grid;grid-template-columns:1.32fr 1fr;gap:22pt;align-items:start;margin-bottom:6pt}
   .waterfall tr.sub td{border:0;padding:0 0 5.5pt;font-size:8.8pt;color:var(--muted);line-height:1.4}
-  .tramos-standalone{margin:0 0 20pt;max-width:100%}
+  .tramos-standalone{margin:0 0 14pt;max-width:100%}
+  .cascada{width:100%;border-collapse:collapse;font-size:9pt;margin-bottom:6pt}
+  .cascada th{text-align:left;font-size:7.2pt;letter-spacing:.06em;text-transform:uppercase;font-weight:600;
+    color:var(--muted);padding:0 0 5pt;border-bottom:0.75pt solid var(--ink)}
+  .cascada th.n,.cascada td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .cascada td{padding:5pt 0;border-bottom:0.5pt solid var(--line)}
+  .cascada td.lbl{color:var(--muted)}
+  .cascada tr.tot td{border-top:0.75pt solid var(--ink);border-bottom:0;font-weight:600;padding-top:6pt}
+  .cascada tr.pct td{border-bottom:0;padding-top:1pt;font-size:8.2pt;color:var(--muted)}
+  .nota{font-size:7.6pt;color:var(--muted);line-height:1.45;margin:0 0 16pt}
   .tramos-box{border:0.5pt solid var(--line);border-radius:2pt;padding:9pt 14pt}
   .tramos-box .cap{font-size:8pt;letter-spacing:.03em;color:var(--muted);line-height:1.4;margin-bottom:8pt}
   .tramos{width:100%;border-collapse:collapse;font-size:9.6pt}
@@ -155,14 +164,14 @@
   <h1>Dos estructuras de inversión<br><span>Préstamo Participativo — Sociedad Propia del inversor</span></h1>
   <div class="doc-meta">
     <span><b>Confidencial</b> · nota para segunda reunión</span>
-    <span>Ejemplo: <b>1.000.000 €</b> de capital · <b>250.000 €</b> de ganancia</span>
+    <span>Ejemplo: <b>1.000.000 €</b> de capital · <b>250.000 €</b> de ganancia · <b>12 meses</b></span>
     <span>Agosto 2026</span>
   </div>
 
   <p class="lede">Dos vías para financiar la misma operación de compra, reforma y venta en Madrid prime.
     No cambia el negocio: cambia la fiscalidad, la garantía y el grado de control que el inversor retiene.
-    Esta nota compara ambas sobre <b>una misma operación de referencia</b>, con capital y plazo idénticos,
-    para decidir en igualdad de condiciones.</p>
+    Para compararlas en igualdad de condiciones, ambas se calculan sobre <b>un mismo ejemplo</b>:
+    1.000.000 € de capital, 250.000 € de ganancia del proyecto y 12 meses.</p>
 
 
   <h2>Comparación estructural</h2>
@@ -175,10 +184,10 @@
         <td class="a">Acreedor. Presta a la sociedad titular del inmueble, administrada por Rebis.</td>
         <td class="b">Socio único de una SL española, titular directa del inmueble.</td></tr>
       <tr><td class="crit">Financiación bancaria</td>
-        <td class="a">Hipoteca asegurada sobre historial y aval de Rebis: 57&nbsp;% LTV aprox.</td>
+        <td class="a">Hipoteca de aproximadamente el 57&nbsp;% del precio de compra, asegurada sobre el historial y el aval de Rebis.</td>
         <td class="b">Se garantiza en tanto el administrador de la sociedad sea uno de los socios de Rebis, por su historial crediticio; ese socio deberá además prestar aval bancario.</td></tr>
       <tr><td class="crit">Remuneración</td>
-        <td class="a">Interés Participativo sobre el beneficio neto del proyecto, pago único al cierre.</td>
+        <td class="a">Interés Participativo sobre la ganancia del proyecto una vez deducida la comisión de gestión; pago único al cierre.</td>
         <td class="b">Dividendo tras Impuesto sobre Sociedades, distribuible tras el cierre.</td></tr>
       <tr><td class="crit">Fiscalidad</td>
         <td class="a">Un nivel: interés deducible en la sociedad. Retención del 12&nbsp;% (impuesto a la renta español), deducible del Impuesto a las Ganancias en Argentina.</td>
@@ -195,7 +204,7 @@
       <tr><td class="crit">Complejidad</td>
         <td class="a">Baja. Sin NIE ni comparecencias ante organismos españoles.</td>
         <td class="b">Media. Alta de NIE, poder apostillado, alta societaria, justificación de origen de fondos.</td></tr>
-      <tr class="final"><td class="crit">Retorno del inversor</td>
+      <tr class="final"><td class="crit">Retorno a 12 meses</td>
         <td class="a"><span class="num">172.700 €</span> · 17,3 % s/ capital</td>
         <td class="b"><span class="num">150.131 €</span> · 15,0 % s/ capital</td></tr>
     </tbody>
@@ -230,6 +239,24 @@
     </div>
   </div>
 
+  <table class="cascada">
+    <thead><tr><th>De la ganancia al bolsillo del inversor</th><th class="n">Modelo A · Participativo</th><th class="n">Modelo B · Sociedad Propia</th></tr></thead>
+    <tbody>
+      <tr><td>Ganancia del proyecto</td><td class="n">250.000 €</td><td class="n">250.000 €</td></tr>
+      <tr><td class="lbl">− Comisión de gestión Rebis</td><td class="n">−53.750 €</td><td class="n">−53.750 €</td></tr>
+      <tr><td>= Base para el inversor</td><td class="n">196.250 €</td><td class="n">196.250 €</td></tr>
+      <tr><td class="lbl">− Impuesto sobre Sociedades</td><td class="n">— <span style="font-size:7.4pt">interés deducible</span></td><td class="n">−29.438 € <span style="font-size:7.4pt">15 %</span></td></tr>
+      <tr><td class="lbl">− Retención en España</td><td class="n">−23.550 € <span style="font-size:7.4pt">12 %</span></td><td class="n">−16.681 € <span style="font-size:7.4pt">10 %</span></td></tr>
+      <tr class="tot"><td>Retorno neto del inversor</td><td class="n">172.700 €</td><td class="n">150.131 €</td></tr>
+      <tr class="pct"><td>Sobre el capital, en 12 meses</td><td class="n">17,3 %</td><td class="n">15,0 %</td></tr>
+    </tbody>
+  </table>
+  <p class="nota"><b>Ganancia del proyecto:</b> resultado de la operación una vez cubiertos compra, impuestos, obra,
+    financiación, venta y costes de la sociedad vehículo; antes de la comisión de gestión y de la fiscalidad del inversor.
+    Los 12 meses del ejemplo están dentro del rango habitual de 9 a 14. El Modelo B aplica el Impuesto sobre Sociedades
+    del 15 % de los dos primeros ejercicios con ganancia: al tipo general del 25 % su retorno sería de 132.469 € (13,2 %)
+    y la diferencia a favor del Préstamo Participativo pasaría de 22.569 € a 40.231 €.</p>
+
   <div class="closing">
     <p>Ambas estructuras son ejecutables sobre la misma operación y el mismo calendario. En nuestra experiencia,
       el préstamo participativo suele ser el camino más directo: un solo nivel de tributación, mayor simplicidad
@@ -239,9 +266,10 @@
     <div class="signoff">Rebis · Desarrollos Inmobiliarios</div>
   </div>
 
-  <p class="disclaimer">Documento confidencial, preparado para uso exclusivo del destinatario. Cifras calculadas sobre el
-    Modelo de Flipping Rebis v1 y cash-flows de operaciones propias de Rebis; los resultados pasados no garantizan
-    resultados futuros. Este documento no constituye asesoramiento legal, fiscal ni de inversión, ni una oferta vinculante.</p>
+  <p class="disclaimer">Documento confidencial, preparado para uso exclusivo del destinatario. Las cifras son un ejemplo
+    ilustrativo sobre importes redondos, no la proyección de una operación concreta; los resultados pasados no garantizan
+    resultados futuros. El tratamiento fiscal indicado debe validarse con asesor fiscal español y argentino. Este documento
+    no constituye asesoramiento legal, fiscal ni de inversión, ni una oferta vinculante.</p>
 
   <div class="pagefoot"><span>Rebis · Transformar con criterio</span><span>2 / 2</span></div>
 </section>
