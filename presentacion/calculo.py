@@ -158,7 +158,8 @@ if __name__ == '__main__':
 #             (~55% del precio de compra) con aval personal del Inversor, y el
 #             apalancamiento juega a su favor. Paga ademas la comision por la
 #             gestion de la hipoteca y el coste de su sociedad vehiculo.
-HON = 0.20        # honorarios de gestion Rebis sobre el resultado de la operacion
+# Los honorarios siguen la escala de TRAMOS por excedente (fee_variante2): cada
+# tasa se aplica solo a la porcion de rentabilidad de su propio tramo.
 HON_HIPOTECA = 0.02   # comision por gestion de la hipoteca y aporte del aval (solo Modelo B)
 
 
@@ -166,10 +167,14 @@ def comparacion_pre_impuestos(P=1225000, V=2049300, obra=264107):
     """Rentabilidad del Inversor, antes de sus impuestos, en cada modelo."""
     a = op(P, V, obra, con_hipoteca=False)   # el Inversor financia; Rebis ejecuta
     b = op(P, V, obra)                       # la sociedad del Inversor toma la hipoteca
-    a_neto = a['bruto'] * (1 - HON)
-    b_neto = b['bruto'] * (1 - HON) - b['H'] * HON_HIPOTECA - VEHICULO
+    a_hon = fee_variante2(a['bruto'] / a['capital'], a['capital'])
+    b_hon = fee_variante2(b['bruto'] / b['capital'], b['capital'])
+    a_neto = a['bruto'] - a_hon
+    b_neto = b['bruto'] - b_hon - b['H'] * HON_HIPOTECA - VEHICULO
     return dict(a_capital=a['capital'], a_neto=a_neto, a_roi=a_neto / a['capital'],
+                a_hon=a_hon, a_hon_pct=a_hon / a['bruto'],
                 b_capital=b['capital'], b_neto=b_neto, b_roi=b_neto / b['capital'],
+                b_hon=b_hon, b_hon_pct=b_hon / b['bruto'],
                 hipoteca=b['H'], ltv=b['H'] / b['P'], meses=b['meses'])
 
 
@@ -178,5 +183,7 @@ if __name__ == '__main__':
     print("\n" + "=" * 78)
     print(f"Rentabilidad antes de impuestos, en {c['meses']} meses "
           f"(hipoteca {c['hipoteca']:,.0f} EUR, LTV {c['ltv']:.0%} s/precio)")
-    print(f"  Modelo A  capital {c['a_capital']:>12,.0f}  resultado {c['a_neto']:>11,.0f}  {c['a_roi']:>7.2%}")
-    print(f"  Modelo B  capital {c['b_capital']:>12,.0f}  resultado {c['b_neto']:>11,.0f}  {c['b_roi']:>7.2%}")
+    print(f"  Modelo A  capital {c['a_capital']:>12,.0f}  honorarios {c['a_hon']:>10,.0f}({c['a_hon_pct']:>6.2%})"
+          f"  resultado {c['a_neto']:>11,.0f}  {c['a_roi']:>7.2%}")
+    print(f"  Modelo B  capital {c['b_capital']:>12,.0f}  honorarios {c['b_hon']:>10,.0f}({c['b_hon_pct']:>6.2%})"
+          f"  resultado {c['b_neto']:>11,.0f}  {c['b_roi']:>7.2%}   (+2% hipoteca, +vehiculo)")

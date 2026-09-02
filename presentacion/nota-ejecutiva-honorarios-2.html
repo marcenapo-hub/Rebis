@@ -99,7 +99,7 @@
 
   .fee-wrap{display:grid;grid-template-columns:1.32fr 1fr;gap:22pt;align-items:start;margin-bottom:6pt}
   .waterfall tr.sub td{border:0;padding:0 0 5.5pt;font-size:8.8pt;color:var(--muted);line-height:1.4}
-  .tramos-standalone{margin:0 0 14pt;max-width:100%}
+  .tramos-standalone{margin:20pt 0 14pt;max-width:100%}
   .cascada{width:100%;border-collapse:collapse;font-size:9pt;margin-bottom:6pt}
   .cascada th{text-align:left;font-size:7.2pt;letter-spacing:.06em;text-transform:uppercase;font-weight:600;
     color:var(--muted);padding:0 0 5pt;border-bottom:0.75pt solid var(--ink)}
@@ -108,20 +108,20 @@
   .cascada td.lbl{color:var(--muted)}
   .cascada tr.tot td{border-top:0.75pt solid var(--ink);border-bottom:0;font-weight:600;padding-top:6pt}
   .cascada tr.pct td{border-bottom:0;padding-top:1pt;font-size:8.2pt;color:var(--muted)}
-  .obligaciones{display:grid;grid-template-columns:1fr 1fr;gap:22pt;margin:16pt 0 14pt}
+  .obligaciones{display:grid;grid-template-columns:1fr 1fr;gap:22pt;margin:12pt 0 10pt}
   .obligaciones .col > b{display:block;font-size:7.2pt;letter-spacing:.07em;text-transform:uppercase;
     color:var(--muted);font-weight:600;padding-bottom:5pt;border-bottom:0.75pt solid var(--ink);margin-bottom:2pt}
   .obligaciones ul{margin:0;padding:0;list-style:none;font-size:8.4pt;line-height:1.4}
-  .obligaciones li{padding:4.6pt 0;border-bottom:0.5pt solid var(--line)}
+  .obligaciones li{padding:3.5pt 0;border-bottom:0.5pt solid var(--line)}
   .obligaciones li:last-child{border-bottom:0}
-  .nota{font-size:7.6pt;color:var(--muted);line-height:1.45;margin:0 0 16pt}
-  .tramos-box{border:0.5pt solid var(--line);border-radius:2pt;padding:9pt 14pt}
+  .nota{font-size:7.6pt;color:var(--muted);line-height:1.42;margin:0 0 12pt}
+  .tramos-box{border:0.5pt solid var(--line);border-radius:2pt;padding:8pt 14pt}
   .tramos-box .cap{font-size:8pt;letter-spacing:.03em;color:var(--muted);line-height:1.4;margin-bottom:8pt}
   .tramos{width:100%;border-collapse:collapse;font-size:9.6pt}
   .tramos th{text-align:left;font-size:7.2pt;letter-spacing:.06em;text-transform:uppercase;font-weight:600;
     color:var(--muted);padding:0 0 5pt;border-bottom:0.75pt solid var(--ink)}
   .tramos th.n,.tramos td.n{text-align:right;font-variant-numeric:tabular-nums}
-  .tramos td{padding:5.5pt 0;border-bottom:0.5pt solid var(--line)}
+  .tramos td{padding:4.4pt 0;border-bottom:0.5pt solid var(--line)}
   .tramos tr:last-child td{border-bottom:0}
   .tramos tr.tot td{border-top:0.75pt solid var(--ink);font-weight:600;padding-top:6pt}
 
@@ -152,7 +152,7 @@
   .risklist b{font-weight:600}
 
   .closing{margin-top:0;padding-top:0}
-  .closing p{font-size:10pt;line-height:1.6;margin:0 0 10pt;max-width:88%}
+  .closing p{font-size:10pt;line-height:1.52;margin:0 0 8pt;max-width:88%}
   .closing .signoff{font-size:8pt;color:var(--muted);margin-top:2pt}
 
   .disclaimer{font-size:7pt;color:var(--muted);line-height:1.45;margin-top:14pt;padding-top:8pt;
@@ -196,8 +196,8 @@
         <td class="a">Los presta Rebis. El Inversor no avala.</td>
         <td class="b">Rebis gestiona la financiación y aporta su aval, pero el banco exige además <b>aval personal del Inversor, con su patrimonio</b>, más las garantías reales que correspondan.</td></tr>
       <tr><td class="crit">Honorarios de Rebis</td>
-        <td class="a">20&nbsp;% sobre el resultado de la operación.</td>
-        <td class="b">20&nbsp;% sobre el resultado, más 2&nbsp;% sobre el importe de hipoteca efectivamente concedido, por su gestión y por el aval aportado.</td></tr>
+        <td class="a">Escala por tramos de rentabilidad, del 20&nbsp;% al 30&nbsp;%, aplicada solo sobre el excedente de cada tramo.</td>
+        <td class="b">La misma escala, más 2&nbsp;% sobre el importe de hipoteca efectivamente concedido, por su gestión y por el aval aportado.</td></tr>
       <tr><td class="crit">Remuneración</td>
         <td class="a">Interés participativo sobre el resultado de la operación una vez deducidos los honorarios; pago único al cierre.</td>
         <td class="b">Dividendo, distribuible tras el cierre y tras el Impuesto sobre Sociedades.</td></tr>
@@ -214,8 +214,8 @@
         <td class="a">Un nivel: el interés es gasto deducible en la sociedad. Retención del 12&nbsp;% en España, deducible en Argentina.</td>
         <td class="b">Dos niveles: Impuesto sobre Sociedades y retención del 10&nbsp;% al distribuir el dividendo. Ambos deducibles en Argentina.</td></tr>
       <tr class="final"><td class="crit">Rentabilidad antes de impuestos</td>
-        <td class="a"><span class="num">15,4 %</span> sobre el capital del Inversor</td>
-        <td class="b"><span class="num">17,1 %</span> sobre el capital del Inversor</td></tr>
+        <td class="a"><span class="num">15,2 %</span> sobre el capital del Inversor</td>
+        <td class="b"><span class="num">16,8 %</span> sobre el capital del Inversor</td></tr>
     </tbody>
   </table>
 
@@ -232,18 +232,23 @@
   <div class="tramos-standalone">
     <div class="tramos-box">
       <div class="cap">Honorarios de Rebis. Se cobran contra el resultado de la operación, una vez
-        cubiertos compra, impuestos, obra, financiación y venta — nunca sobre el capital aportado.</div>
+        cubiertos compra, impuestos, obra, financiación y venta — nunca sobre el capital aportado.
+        Cada tasa se aplica únicamente sobre la porción de rentabilidad comprendida en su propio tramo.</div>
       <table class="tramos">
-        <thead><tr><th>Concepto</th><th class="n">Modelo A</th><th class="n">Modelo B</th></tr></thead>
+        <thead><tr><th>Tramo de rentabilidad sobre el capital</th><th class="n">Tasa aplicada al tramo</th></tr></thead>
         <tbody>
-          <tr><td>Gestión integral de la operación</td><td class="n">20 %</td><td class="n">20 %</td></tr>
-          <tr><td>Gestión de la hipoteca y aporte del aval</td><td class="n">—</td><td class="n">2 % s/ hipoteca concedida</td></tr>
+          <tr><td>0 – 15 %</td><td class="n">20 %</td></tr>
+          <tr><td>15 – 20 %</td><td class="n">22,5 %</td></tr>
+          <tr><td>20 – 25 %</td><td class="n">25 %</td></tr>
+          <tr><td>Más de 25 %</td><td class="n">30 %</td></tr>
         </tbody>
       </table>
+      <div class="cap" style="margin:9pt 0 0">En el Modelo B se añade un 2&nbsp;% sobre el importe de hipoteca
+        efectivamente concedido, por su gestión y por el aval aportado por Rebis.</div>
     </div>
   </div>
 
-  <h2 style="margin-top:16pt">Lo que el Inversor asume en cada estructura</h2>
+  <h2 style="margin-top:14pt">Lo que el Inversor asume en cada estructura</h2>
   <div class="obligaciones" style="margin-top:0">
     <div class="col"><b>Modelo A · Préstamo Participativo</b>
       <ul>
@@ -257,7 +262,7 @@
         <li>Obtener NIE y otorgar poder apostillado.</li>
         <li>Constituir la SL, abrir cuenta y justificar el origen de los fondos.</li>
         <li>Presentarse ante el banco y firmar el aval personal.</li>
-        <li>Sostener contabilidad, impuestos y administración mientras la sociedad exista.</li>
+        <li>Sostener contabilidad, impuestos y administración de la sociedad.</li>
         <li>Resolver al cierre si la sociedad se mantiene o se disuelve.</li>
       </ul>
     </div>
@@ -265,11 +270,13 @@
 
   <p class="nota"><b>Sobre las cifras.</b> Ambas rentabilidades son <b>antes de impuestos del Inversor</b> y se
     calculan sobre la misma operación de referencia del modelo de Rebis, con un ciclo de 11 meses — el rango
-    habitual es de 9 a 14. La diferencia de 1,7 puntos a favor del Modelo B es el apalancamiento: la hipoteca
+    habitual es de 9 a 14. Sobre esa operación la escala de honorarios da una tasa efectiva del 20,6&nbsp;% en el
+    Modelo A y del 21,5&nbsp;% en el Modelo B, que alcanza un tramo de rentabilidad superior. La diferencia de
+    1,5 puntos a favor del Modelo B es el apalancamiento: la hipoteca
     cubre parte del coste y el mismo resultado se obtiene sobre menos capital propio. Ese apalancamiento es
     también la razón por la que el Modelo B exige el aval personal del Inversor. En el Modelo A la financiación
     queda íntegramente del lado de Rebis, junto con su riesgo, y por eso la retribución del Inversor no se
-    apalanca. La fiscalidad opera en sentido contrario a esos 1,7 puntos: el interés participativo tributa una
+    apalanca. La fiscalidad opera en sentido contrario a esos 1,5 puntos: el interés participativo tributa una
     sola vez, mientras que el Modelo B tributa en la sociedad y otra vez al distribuir el dividendo.</p>
 
   <div class="closing">

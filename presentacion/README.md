@@ -24,10 +24,14 @@ Las dos rentabilidades del documento vigente salen de
 `comparacion_pre_impuestos()`, sobre esa misma operación y antes de los
 impuestos del Inversor. La diferencia entre ambas es quién toma la hipoteca:
 
-| | Capital del Inversor | Resultado | Rentabilidad (11 meses) |
-|---|---|---|---|
-| Modelo A · préstamo participativo | 1.719.421 € | 263.903 € | **15,35 %** |
-| Modelo B · sociedad propia | 1.102.632 € | 188.909 € | **17,13 %** |
+| | Capital del Inversor | Honorarios | Resultado | Rentabilidad (11 meses) |
+|---|---|---|---|---|
+| Modelo A · préstamo participativo | 1.719.421 € | 67.775 € (20,55 %) | 262.104 € | **15,24 %** |
+| Modelo B · sociedad propia | 1.102.632 € | 58.581 € (21,46 %) | 184.911 € | **16,77 %** |
+
+Los honorarios siguen la escala por tramos aplicada sobre el excedente
+(`fee_variante2`): cada tasa grava solo la porción de rentabilidad de su propio
+tramo, de ahí que la tasa efectiva difiera entre modelos.
 
 En el Modelo A la financiación bancaria y el aval quedan en Rebis, de modo que
 el apalancamiento no juega a favor del Inversor. En el Modelo B la hipoteca
@@ -49,9 +53,8 @@ Fuentes documentales usadas en la presentación:
 Definidos como constantes en `calculo.py` para poder ajustarlos si cambian los
 términos negociados:
 
-- `HON = 0.20` — honorarios de gestión de Rebis sobre el resultado de la operación
 - `HON_HIPOTECA = 0.02` — comisión por la gestión de la hipoteca y el aporte del aval (solo Modelo B)
-- `FEE = 0.20` — comisión usada por las notas anteriores
+- `FEE = 0.20` — comisión fija usada por las notas anteriores
 - `IS = 0.25` — Impuesto sobre Sociedades (solo Modelo B)
 - `WHT_DIV = 0.10` — retención por salida de capital vía dividendo (solo Modelo B)
 - `VEHICULO` — coste del vehículo societario prorrateado a 11 meses
