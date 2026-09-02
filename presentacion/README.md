@@ -9,25 +9,32 @@ del inversor**.
 | Archivo | Qué es |
 |---|---|
 | `modelos-inversion.html` | La presentación completa (web). Página autónoma; se abre en cualquier navegador. |
-| `nota-ejecutiva.html` / `.pdf` | Versión condensada a dos carillas A4 para un inversor calificado, con la comisión de gestión fija (20 %). Estilo del Manual de Identidad de Rebis. |
-| `nota-ejecutiva-honorarios-1.html` / `.pdf` | Misma nota, con la comisión de gestión variable por tramo de rentabilidad — Variante 1 (una sola tasa sobre la totalidad del beneficio, la del tramo alcanzado). |
-| `nota-ejecutiva-honorarios-2.html` / `.pdf` | Misma nota, con la comisión de gestión variable por tramo de rentabilidad — Variante 2 (cada tasa aplica solo a la porción de beneficio de su propio tramo). **Versión vigente**, sobre un ejemplo redondo de 1.000.000 € de capital / 250.000 € de ganancia / 12 meses. |
-| `nota-ejecutiva-honorarios-2-sin-cuadro.html` / `.pdf` | La misma versión vigente, sin la tabla de reconciliación «De la ganancia al bolsillo del inversor». La cadena de cálculo pasa a la nota al pie de la página 2. |
+| `nota-ejecutiva-honorarios-2.html` / `.pdf` | **Documento vigente.** Nota de dos carillas A4 para el Inversor, con la rentabilidad antes de impuestos y los honorarios de Rebis explícitos. |
+| `nota-ejecutiva.html` / `.pdf` · `nota-ejecutiva-honorarios-1.html` / `.pdf` | Versiones anteriores, **desactualizadas**: cifras después de impuestos y comisión por tramos. No enviar sin realinear. |
 | `calculo.py` | Motor de cálculo que produce todas las cifras económicas. `python3 calculo.py` |
 
 ## De dónde salen los números
-
-`nota-ejecutiva-honorarios-2` (la versión vigente) no proyecta una operación
-concreta: usa un ejemplo redondo — 1.000.000 € de capital, 250.000 € de
-ganancia del proyecto (25 % sobre capital) y 12 meses — para que las dos
-estructuras se comparen en igualdad de condiciones. La cascada completa está
-reconciliada dentro del propio documento. Las otras dos notas siguen sobre las
-cifras derivadas del modelo y aún no se actualizaron.
 
 `calculo.py` reimplementa las hojas `Inputs` y `Cálculos y Resultados` del
 **Modelo de Flipping Rebis v1** (Google Drive) y reproduce exactamente su caso
 base: coste total 1.776.382,39 €, capital propio 1.102.632,39 € y beneficio
 bruto 272.917,61 €.
+
+Las dos rentabilidades del documento vigente salen de
+`comparacion_pre_impuestos()`, sobre esa misma operación y antes de los
+impuestos del Inversor. La diferencia entre ambas es quién toma la hipoteca:
+
+| | Capital del Inversor | Resultado | Rentabilidad (11 meses) |
+|---|---|---|---|
+| Modelo A · préstamo participativo | 1.719.421 € | 263.903 € | **15,35 %** |
+| Modelo B · sociedad propia | 1.102.632 € | 188.909 € | **17,13 %** |
+
+En el Modelo A la financiación bancaria y el aval quedan en Rebis, de modo que
+el apalancamiento no juega a favor del Inversor. En el Modelo B la hipoteca
+(55 % del precio de compra) la toma la sociedad del Inversor, con su aval
+personal, y por eso el mismo resultado se obtiene sobre menos capital propio.
+El Modelo B soporta además el 2 % por la gestión de la hipoteca y el coste de
+la sociedad vehículo.
 
 Fuentes documentales usadas en la presentación:
 
@@ -42,7 +49,9 @@ Fuentes documentales usadas en la presentación:
 Definidos como constantes en `calculo.py` para poder ajustarlos si cambian los
 términos negociados:
 
-- `FEE = 0.20` — comisión de gestión de Rebis sobre el beneficio del proyecto (nota-ejecutiva base)
+- `HON = 0.20` — honorarios de gestión de Rebis sobre el resultado de la operación
+- `HON_HIPOTECA = 0.02` — comisión por la gestión de la hipoteca y el aporte del aval (solo Modelo B)
+- `FEE = 0.20` — comisión usada por las notas anteriores
 - `IS = 0.25` — Impuesto sobre Sociedades (solo Modelo B)
 - `WHT_DIV = 0.10` — retención por salida de capital vía dividendo (solo Modelo B)
 - `VEHICULO` — coste del vehículo societario prorrateado a 11 meses

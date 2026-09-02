@@ -142,3 +142,41 @@ if __name__ == '__main__':
             print(f"{nombre:<13} rentab.proyecto={c['gross_roi']:>7.2%} fee={c['fee']:>10,.0f}({c['fee_pct']:>6.2%}) "
                   f"base={c['base']:>10,.0f}  A={c['a_roi']:>7.2%}/{c['a_anual']:>7.2%}  "
                   f"B={c['b_roi']:>7.2%}/{c['b_anual']:>7.2%}")
+
+
+# ---------------------------------------------------------------------------
+# Comparacion vigente de la nota ejecutiva: rentabilidad ANTES de impuestos.
+#
+# La diferencia economica entre los dos modelos es quien toma la financiacion
+# bancaria y, con ella, quien se queda el apalancamiento y el riesgo:
+#
+#   Modelo A  Prestamo participativo a la sociedad de Rebis. La hipoteca, si
+#             se usa, la toma Rebis sobre su propia sociedad y su historial;
+#             el aval es de Rebis. La retribucion del Inversor no se apalanca,
+#             de modo que su capital cubre el coste de la operacion.
+#   Modelo B  Sociedad propia del Inversor. La hipoteca la toma su sociedad
+#             (~55% del precio de compra) con aval personal del Inversor, y el
+#             apalancamiento juega a su favor. Paga ademas la comision por la
+#             gestion de la hipoteca y el coste de su sociedad vehiculo.
+HON = 0.20        # honorarios de gestion Rebis sobre el resultado de la operacion
+HON_HIPOTECA = 0.02   # comision por gestion de la hipoteca y aporte del aval (solo Modelo B)
+
+
+def comparacion_pre_impuestos(P=1225000, V=2049300, obra=264107):
+    """Rentabilidad del Inversor, antes de sus impuestos, en cada modelo."""
+    a = op(P, V, obra, con_hipoteca=False)   # el Inversor financia; Rebis ejecuta
+    b = op(P, V, obra)                       # la sociedad del Inversor toma la hipoteca
+    a_neto = a['bruto'] * (1 - HON)
+    b_neto = b['bruto'] * (1 - HON) - b['H'] * HON_HIPOTECA - VEHICULO
+    return dict(a_capital=a['capital'], a_neto=a_neto, a_roi=a_neto / a['capital'],
+                b_capital=b['capital'], b_neto=b_neto, b_roi=b_neto / b['capital'],
+                hipoteca=b['H'], ltv=b['H'] / b['P'], meses=b['meses'])
+
+
+if __name__ == '__main__':
+    c = comparacion_pre_impuestos()
+    print("\n" + "=" * 78)
+    print(f"Rentabilidad antes de impuestos, en {c['meses']} meses "
+          f"(hipoteca {c['hipoteca']:,.0f} EUR, LTV {c['ltv']:.0%} s/precio)")
+    print(f"  Modelo A  capital {c['a_capital']:>12,.0f}  resultado {c['a_neto']:>11,.0f}  {c['a_roi']:>7.2%}")
+    print(f"  Modelo B  capital {c['b_capital']:>12,.0f}  resultado {c['b_neto']:>11,.0f}  {c['b_roi']:>7.2%}")
