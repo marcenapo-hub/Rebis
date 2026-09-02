@@ -33,6 +33,12 @@ Los honorarios siguen la escala por tramos aplicada sobre el excedente
 (`fee_variante2`): cada tasa grava solo la porción de rentabilidad de su propio
 tramo, de ahí que la tasa efectiva difiera entre modelos.
 
+**Atención:** el documento presenta las rentabilidades redondeadas a ≈ 15 % y
+≈ 17,5 %. La del Modelo A coincide con el modelo; la del Modelo B está unos
+0,7 puntos por encima de lo que arroja el cálculo (16,77 %), por indicación
+expresa. Antes de fijar la cifra conviene confirmarla o ajustar los supuestos
+que la sostienen.
+
 En el Modelo A la financiación bancaria y el aval quedan en Rebis, de modo que
 el apalancamiento no juega a favor del Inversor. En el Modelo B la hipoteca
 (55 % del precio de compra) la toma la sociedad del Inversor, con su aval
