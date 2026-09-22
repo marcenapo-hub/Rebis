@@ -9,7 +9,25 @@ la misma operación, para enviar al Inversor.
 | Opción 2 · Sociedad propia | La sociedad titular es del Inversor, que toma la hipoteca a su nombre con aval personal y recibe la totalidad del resultado restante. |
 
 Fuente: `Cash-Flow.xlsx` de Sebastián (Drive) y las notas de la reunión del
-22/09/2026. Las celdas en azul son los datos de entrada; el resto son fórmulas.
+22/09/2026. Las celdas con fondo cerámica son los datos de entrada; el resto
+son fórmulas.
+
+## Aplicación del Manual de Identidad
+
+- **Tipografía Arial**, Regular y Bold. El manual designa a Arial como fuente
+  de sistema de Rebis para «entornos técnicos, digitales o administrativos»,
+  que es donde Poppins no está disponible: un libro de cálculo es ese caso.
+- **Wordmark en la esquina superior derecha** de cada hoja, en su versión
+  negra sobre fondo claro, con el área de protección libre alrededor. Es la
+  única variante admitida en material corporativo.
+- **Paleta principal**: negro para las bandas de sección, arcilla para los
+  totales destacados, cerámica para los datos de entrada, concreto y hormigón
+  para el texto secundario. **Roble Natural** queda reservado como único
+  acento, sobre la rentabilidad final y la URL.
+- **«Rebis»** escrito siempre con mayúscula inicial y minúsculas, nunca en
+  versales.
+- Cierre con la tagline a la izquierda y `rebis.com` en la esquina inferior
+  derecha, alineada con el logotipo.
 
 ## Resultado
 
