@@ -67,8 +67,8 @@ multiplicar por 1,242, que se queda corto.
 Las dos opciones están en la carpeta Lole como Hojas de cálculo nativas, con
 las fórmulas vivas:
 
-- [Opción 1 · Préstamo participativo](https://docs.google.com/spreadsheets/d/1sLJHchdOhK0BP2FYdSwcQ7g6E48WvxtHFJhNigkkqeg/edit)
-- [Opción 2 · Sociedad propia](https://docs.google.com/spreadsheets/d/1WK-19NWvmQs5KihKVTjw3ZW0ceD0n9Y76l09TXcqd6o/edit)
+- [Opción 1 · Préstamo participativo](https://docs.google.com/spreadsheets/d/1zonP-71gfjXjr5xeddJivYsxqZm0CaNhMjS2II24IXA/edit)
+- [Opción 2 · Sociedad propia](https://docs.google.com/spreadsheets/d/1SOhjZhPyk-a_xmq-nlSIRmnyFAPX0ZQ1B2t3D71HvMg/edit)
 
 Se cargaron como TSV con convención de locale español —coma decimal y punto y
 coma como separador de argumentos—, porque el conector de Drive corrompe las
