@@ -61,3 +61,24 @@ El modelo muestra la rentabilidad después de los honorarios de Rebis. La línea
 siguiente devuelve la equivalencia sin ellos: 18,13 % en la Opción 1 y 33,12 %
 en la Opción 2. Es el cálculo exacto — dividir por 0,758 — y no el atajo de
 multiplicar por 1,242, que se queda corto.
+
+## En Google Drive
+
+Las dos opciones están en la carpeta Lole como Hojas de cálculo nativas, con
+las fórmulas vivas:
+
+- [Opción 1 · Préstamo participativo](https://docs.google.com/spreadsheets/d/1sLJHchdOhK0BP2FYdSwcQ7g6E48WvxtHFJhNigkkqeg/edit)
+- [Opción 2 · Sociedad propia](https://docs.google.com/spreadsheets/d/1WK-19NWvmQs5KihKVTjw3ZW0ceD0n9Y76l09TXcqd6o/edit)
+
+Se cargaron como TSV con convención de locale español —coma decimal y punto y
+coma como separador de argumentos—, porque el conector de Drive corrompe las
+subidas binarias: un .xlsx de 19.344 bytes llegó como 18.665. El libro con
+formato de marca es el `.xlsx` de esta carpeta y hay que subirlo a mano.
+
+## Una trampa de openpyxl
+
+El openpyxl de este entorno escribe todo el texto como `inlineStr` y no genera
+`xl/sharedStrings.xml`. Es OOXML válido, pero el importador de Google no lo
+interpreta y el libro se abre sin ningún texto. `tabla_cadenas.py` reescribe el
+paquete con la tabla de cadenas compartidas; hay que ejecutarlo después de
+generar el libro y antes de distribuirlo.
